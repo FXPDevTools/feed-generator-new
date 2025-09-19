@@ -190,14 +190,11 @@ export default function Home() {
             <div className="mb-4">
                 <label className="block mb-2">תוכן הכתבה</label>
                 <div className="flex flex-wrap gap-2 mb-2">
-                    <button onClick={() => addBbCode('[B]', '[/B]')} className="bg-gray-600 px-3 py-1 rounded">Bold</button>
-                    <button onClick={() => addBbCode('[I]', '[/I]')} className="bg-gray-600 px-3 py-1 rounded">Italic</button>
-                    <button onClick={() => addBbCode('[U]', '[/U]')} className="bg-gray-600 px-3 py-1 rounded">Underline</button>
-                    <button onClick={() => addBbCode('[S]', '[/S]')} className="bg-gray-600 px-3 py-1 rounded">Strike</button>
-                    <button onClick={() => {const url = prompt("Enter URL:"); if(url) addBbCode(`[URL="${url}"]`, '[/URL]')}} className="bg-gray-600 px-3 py-1 rounded">Link</button>
-                    <button onClick={() => {const color = prompt("Enter color (e.g., red or #FF0000):"); if(color) addBbCode(`[COLOR="${color}"]`, '[/COLOR]')}} className="bg-gray-600 px-3 py-1 rounded">Color</button>
-                    <button onClick={() => addList('1')} className="bg-gray-600 px-3 py-1 rounded">Ordered List</button>
-                    <button onClick={() => addList('')} className="bg-gray-600 px-3 py-1 rounded">Unordered List</button>
+                    <button onClick={() => addBbCode('[B]', '[/B]')} className="bg-gray-600 px-3 py-1 rounded">B</button>
+                    <button onClick={() => addBbCode('[I]', '[/I]')} className="bg-gray-600 px-3 py-1 rounded">I</button>
+                    <button onClick={() => addBbCode('[U]', '[/U]')} className="bg-gray-600 px-3 py-1 rounded">U</button>
+                    <button onClick={() => {const url = prompt("Enter URL:"); if(url) addBbCode(`[URL="${url}"]`, '[/URL]')}} className="bg-gray-600 px-3 py-1 rounded">היפר־קישור</button>
+                    <button onClick={() => {const color = prompt("Enter color (e.g., red or #FF0000):"); if(color) addBbCode(`[COLOR="${color}"]`, '[/COLOR]')}} className="bg-gray-600 px-3 py-1 rounded">צבע</button>
                 </div>
                 <textarea ref={contentRef} value={content} onChange={(e) => setContent(e.target.value)} className="w-full p-2 bg-gray-700 rounded h-48" />
             </div>
