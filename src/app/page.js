@@ -175,21 +175,16 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8 bg-gray-900 text-white">
       <div className="z-10 w-full max-w-7xl items-center justify-between font-mono text-sm lg:flex flex-col">
-        <h1 className="text-4xl font-bold mb-8">Article Generator</h1>
+        <h1 className="text-4xl font-bold mb-8">מחולל כתבות</h1>
 
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Input Section */}
           <div className="bg-gray-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">Content</h2>
+            <h2 className="text-2xl font-semibold mb-4">תוכן</h2>
             
             <div className="mb-4">
-              <label className="block mb-2">Title</label>
+              <label className="block mb-2">כותרת הכתבה</label>
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full p-2 bg-gray-700 rounded"/>
-            </div>
-
-            <div className="mb-4">
-              <label className="block mb-2">Secondary Title</label>
-              <input type="text" value={secondaryTitle} onChange={(e) => setSecondaryTitle(e.target.value)} className="w-full p-2 bg-gray-700 rounded"/>
             </div>
 
             <div className="mb-4">
