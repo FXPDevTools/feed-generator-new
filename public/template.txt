@@ -1,0 +1,62 @@
+<div class="previewDiv">
+<center><span style="color:#%deptColor%;" class="ArticleTitle">%ArticleTitle%</span>
+<br><br>
+%ImageLink%
+<br>
+<span class="ArticleContent">%Content%</span>
+<br>
+<span class="ArticleGrey">%RelevantLinkDesc%</span>
+<br>
+<u><a href="%RelevantLink%">
+<span class="ArticleGrey">
+%RelevantLink%
+</span></a></u>
+<br><br>
+<u><a href="%Source%"><span class="ArticleGrey">מקור</span></a></u>
+<br>
+<img src="https://images.weserv.nl/?url=i.imgur.com%2FBP1U0yb.png">
+<br>
+<span style="color:#%deptColor%" class="ArticleDiv">יש לכם שאלות? רוצים לדעת עוד? היכנסו לפורום</span>
+<br>
+<a href="https://www.fxp.co.il/forumdisplay.php?f=%ForumID%"><font color="#%deptColor%"><span class="ArticleForum"> %ForumName%</span></font></a>
+<br><br>
+<!-- Comment out the RelevantArticles --->
+<!-- <font color="#%deptColor%"><span style="font-size:1.1em;" class="ArticleDiv"> אולי יעניין אותך גם:</span></font>
+<br>
+<b>
+<a href="%AdditionalLink1%"><font size="2" color="#0000cd">
+<span class="ArticleLink">
+%AdditionalLink1Desc%
+</span>
+</font></a>
+<br>
+<a href="%AdditionalLink2%"><font size="2" color="#0000cd">
+<span class="ArticleLink">
+%AdditionalLink2Desc%
+</span>
+</font></a>
+<br>
+<a href="%AdditionalLink3%"><font size="2" color="#0000cd">
+<span class="ArticleLink">
+%AdditionalLink3Desc%
+</span>
+</font></a>
+<br>
+<a href="%AdditionalLink4%"><font size="2" color="#0000cd">
+<span class="ArticleLink">
+%AdditionalLink4Desc%
+</span>
+</font></a>
+<br>
+<a href="%AdditionalLink5%"><font size="2" color="#0000cd">
+<span class="ArticleLink">
+%AdditionalLink5Desc%
+</span>
+</font></a> --->
+<br>
+</b>
+<span class="ArticleMistake">
+מצאתם טעות בכתבה? ספרו לנו ונתקן בהקדם
+</span></a>
+</center>
+</div>
