@@ -17,10 +17,12 @@
         "relevantArticlesEnabled": false,
         "deptColor": "999900",
         "deptSecondColor": "63bcf5",
-        "deptLogo": "https://i.imgur.com/CL7EMPw.png",
+        "deptLogo": "https://i.imgur.com/Oc5rHsm.png",
         "relevantForumEnabled": true,
         "sourceEnabled": true,
         "mediaEnabled": true,
-        "enabled": true
+        "enabled": true,
+        "templateFile": "/eruhim/template.txt",
+        "qatemplate": "/eruhim/qa-template.txt"
     }
 }

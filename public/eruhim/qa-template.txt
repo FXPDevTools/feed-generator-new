@@ -1,0 +1,10 @@
+        <table class="cms_table_cms_table_cms_table_cms_table_cms_table_cms_table" style="width: 900px; margin-left: auto; margin-right: auto;">
+            <tbody>
+                <tr style="background-color: #999900;">
+                    <td style="text-align: center;">%Question%</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">%Answer%</td>
+                </tr>
+            </tbody>
+        </table>

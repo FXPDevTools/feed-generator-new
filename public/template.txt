@@ -4,7 +4,7 @@
 %ImageLink%
 <br>
 <span class="ArticleContent">%Content%</span>
-<br>
+<br><br>
 <span class="ArticleGrey">%RelevantLinkDesc%</span>
 <br>
 <u><a href="%RelevantLink%">

@@ -1,0 +1,40 @@
+<div class="previewDiv">
+    <center>
+        <img src="https://images.weserv.nl/?url=i.imgur.com/Oc5rHsm.png" alt="Header Banner" style="margin-bottom: 20px;">
+
+        <span style="color:#999900;" class="ArticleTitle">ריאיון עם {שם המתארח}</span>
+        
+        <div class="ArticleContent" style="margin: 20px 0;">
+            גולשים יקרים,<br>
+            מערך האירוחים בצוות פיד אמון על אירוח אנשים ומומחים משלל תחומים על מנת לספק לכם, גולשי האתר, תוכן חדשני, מעניין ובעיקר מהנה.
+            <br><br>
+            במסגרת פעילות הצוות, אנו שמחים ונרגשים להציג בפניכם ריאיון עם מתארח חדש:
+        </div>
+
+        <div style="margin: 20px 0;">
+            <span style="color:#999900; font-size: 1.6em; font-weight: bold;">{שם המתארח}</span><br>
+            <span style="color:#999900; font-size: 1.1em; font-weight: bold;">{עיסוק/תחום עניין}</span>
+        </div>
+
+        <div class="ArticleContent" style="margin: 20px 0;">
+            {ביוגרפיה}
+        </div>
+
+        <div style="margin: 20px 0;">
+            {תמונה}
+        </div>
+
+        {QNA_BLOCK}
+        
+        <img src="https://images.weserv.nl/?url=i.imgur.com%2FBP1U0yb.png" style="margin: 20px 0;">
+
+        <div class="ArticleContent" style="margin: 20px 0;">
+            מערך האירוחים מודה ל{שם המתארח} על הריאיון ומקווה שהוא חידש לכם דבר מה.
+        </div>
+
+        <div class="ArticleDiv" style="color: #999900; font-size: 1.3em; font-weight: bold; margin-top: 20px;">
+            בברכה,<br>
+            מערך האירוחים.
+        </div>
+    </center>
+</div>
