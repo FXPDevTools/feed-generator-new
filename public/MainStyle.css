@@ -512,8 +512,6 @@ div:hover.tooltips span {
     right: -5%;
 }
 
-li {}
-
 li::before {
     content: "•";
     /* Insert content that looks like bullets */
@@ -781,7 +779,7 @@ optgroup[label="Maple Story"] {
 }
 
 option {
-    color: black;
+    color: color-mix(in oklab, currentcolor 50%, transparent);
 }
 
 .size {
@@ -822,7 +820,7 @@ option {
 
 .stylebuttons {
     text-align: center;
-    color: black;
+    color: color-mix(in oklab, currentcolor 50%, transparent);
     width: 5%;
     border: 0;
     border-bottom: 2px solid #006666;

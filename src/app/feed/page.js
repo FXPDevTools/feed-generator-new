@@ -117,9 +117,6 @@ function ArticleGeneratorComponent() {
         if (!deptConfig) return;
 
         const generateOutputs = async () => {
-            // const deptConfig = depts[dept];
-            // if (!deptConfig) return;
-
             const media = processMediaLink(imageLink);
 
             // --- Additional Links Logic ---
@@ -135,41 +132,31 @@ function ArticleGeneratorComponent() {
 
                 let htmlTemplate = await response.text();
                 htmlTemplate = htmlTemplate.replace(/%deptColor%/g, deptConfig.deptColor);
-                if (title) htmlTemplate = htmlTemplate.replace(/%ArticleTitle%/g, title);
-                if (imageLink) htmlTemplate = htmlTemplate.replace(/%ImageLink%/g, media.html);
+                // Default title/content if empty
+                htmlTemplate = htmlTemplate.replace(/%ArticleTitle%/g, title || 'כותרת');
+                htmlTemplate = htmlTemplate.replace(/%Content%/g, content ? content.replace(/\n/g, '<br />') : 'תוכן');
+                // Hide other tags if empty
+                htmlTemplate = htmlTemplate.replace(/%ImageLink%/g, imageLink ? media.html : '');
+                htmlTemplate = htmlTemplate.replace(/%RelevantLinkDesc%/g, relevantLinkDesc ? relevantLinkDesc : '');
+                htmlTemplate = htmlTemplate.replace(/%RelevantLink%/g, relevantLink ? relevantLink : '');
+                htmlTemplate = htmlTemplate.replace(/%Source%/g, source ? source : '');
+                htmlTemplate = htmlTemplate.replace(/%ForumName%/g, forumFilled ? forumName : '');
+                // אשכולות רלוונטיים
+                htmlTemplate = htmlTemplate.replace(/%AdditionalLink1%/g, threads[0].link ? threads[0].link : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle1%/g, threads[0].title ? threads[0].title : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalLink2%/g, threads[1].link ? threads[1].link : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle2%/g, threads[1].title ? threads[1].title : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalLink3%/g, threads[2].link ? threads[2].link : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle3%/g, threads[2].title ? threads[2].title : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalLink4%/g, threads[3].link ? threads[3].link : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle4%/g, threads[3].title ? threads[3].title : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalLink5%/g, threads[4].link ? threads[4].link : '');
+                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle5%/g, threads[4].title ? threads[4].title : '');
 
-                let finalContentHtml = content.replace(/\n/g, '<br />')
-                    .replace(/\[B\](.*?)\[\/B\]/gi, '<strong>$1</strong>')
-                    .replace(/\[I\](.*?)\[\/I\]/gi, '<em>$1</em>')
-                    .replace(/\[U\](.*?)\[\/U\]/gi, '<u>$1</u>')
-                    .replace(/\[COLOR=(.*?)\](.*?)\[\/COLOR\]/gi, '<span style="color:$1;">$2</span>');
-
-                if (finalContentHtml) htmlTemplate = htmlTemplate.replace(/%Content%/g, finalContentHtml);
-                if (relevantLink) {
-                    htmlTemplate = htmlTemplate.replace(/%RelevantLinkDesc%/g, relevantLinkDesc);
-                    htmlTemplate = htmlTemplate.replace(/%RelevantLink%/g, relevantLink);
-                }
-                if (source) htmlTemplate = htmlTemplate.replace(/%Source%/g, source);
-
-                // תנאי למפריד העליון בין פורום לאשכולות
-                htmlTemplate = htmlTemplate.replace(/%IF_FORUM_OR_LINKS_START%([\s\S]*?)%IF_FORUM_OR_LINKS_END%/g, forumOrLinksFilled ? `$1` : '');
-
-                // תנאי לבלוק פורום
-                htmlTemplate = htmlTemplate.replace(/%IF_FORUM_START%([\s\S]*?)%IF_FORUM_END%/g, forumFilled ? `$1` : '');
-                htmlTemplate = htmlTemplate.replace(/%ForumName%/g, forumName);
-
-                // תנאי לבלוק הלינקים
-                htmlTemplate = htmlTemplate.replace(/%IF_ADDITIONAL_LINKS_START%([\s\S]*?)%IF_ADDITIONAL_LINKS_END%/g, additionalLinksFilled ? `$1` : '');
-                htmlTemplate = htmlTemplate.replace(/%AdditionalLink1%/g, threads[0].link);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle1%/g, threads[0].title);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalLink2%/g, threads[1].link);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle2%/g, threads[1].title);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalLink3%/g, threads[2].link);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle3%/g, threads[2].title);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalLink4%/g, threads[3].link);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle4%/g, threads[3].title);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalLink5%/g, threads[4].link);
-                htmlTemplate = htmlTemplate.replace(/%AdditionalTitle5%/g, threads[4].title);
+                // Remove conditional blocks if not filled
+                htmlTemplate = htmlTemplate.replace(/%IF_FORUM_OR_LINKS_START%([\s\S]*?)%IF_FORUM_OR_LINKS_END%/g, forumOrLinksFilled ? '$1' : '');
+                htmlTemplate = htmlTemplate.replace(/%IF_FORUM_START%([\s\S]*?)%IF_FORUM_END%/g, forumFilled ? '$1' : '');
+                htmlTemplate = htmlTemplate.replace(/%IF_ADDITIONAL_LINKS_START%([\s\S]*?)%IF_ADDITIONAL_LINKS_END%/g, additionalLinksFilled ? '$1' : '');
 
                 setGeneratedHtml(htmlTemplate);
                 setPreviewContent(htmlTemplate);

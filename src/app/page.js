@@ -10,7 +10,7 @@ export default function Home() {
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* כפתור למחולל פיד */}
           <div>
-            <Link href="/feed?dept=feed" className="block w-full text-white font-bold py-4 rounded text-center text-xl transition" style={{ backgroundColor: '#63bcf5' }}>
+            <Link href="/feed" className="block w-full text-white font-bold py-4 rounded text-center text-xl transition" style={{ backgroundColor: '#3366cc' }}>
               מחולל כתבות פיד
             </Link>
           </div>

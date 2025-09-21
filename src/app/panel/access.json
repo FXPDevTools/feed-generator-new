@@ -1,0 +1,37 @@
+[
+  {
+    "code": "feed123",
+    "role": "עורך",
+    "panels": [
+      "feed"
+    ],
+    "editableByLeader": true
+  },
+  {
+    "code": "eruhim456",
+    "role": "אחראי אירוחים",
+    "panels": [
+      "eruhim"
+    ],
+    "editableByLeader": true
+  },
+  {
+    "code": "leader789",
+    "role": "ראש צוות",
+    "panels": [
+      "feed",
+      "eruhim",
+      "leader"
+    ]
+  },
+  {
+    "code": "admin999",
+    "role": "אדמין",
+    "panels": [
+      "feed",
+      "eruhim",
+      "leader",
+      "admin"
+    ]
+  }
+]
