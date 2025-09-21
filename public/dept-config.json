@@ -9,7 +9,8 @@
         "relevantForumEnabled": true,
         "sourceEnabled": true,
         "mediaEnabled": true,
-        "enabled": true
+        "enabled": true,
+        "templateFile": "/feed/newtemp.txt"
     },
     "eruhim": {
         "workspaceId": "10577",
