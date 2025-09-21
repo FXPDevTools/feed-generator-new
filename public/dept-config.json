@@ -23,9 +23,15 @@
         "sourceEnabled": true,
         "mediaEnabled": true,
         "enabled": true,
-        "templateFile": "/eruhim/template.txt",
-        "qatemplate": "/eruhim/qa-template.txt",
-        "bbcodeTemplateFile": "eruhim/bbcode.bb",
-        "qabbcodeTemp": "eruhim/qa-bbcode.bb"
+        "interviews": {
+            "templateFile": "/eruhim/interviews/template.txt",
+            "qatemplate": "/eruhim/interviews/qa-template.txt",
+            "bbcodeTemplateFile": "/eruhim/interviews/bbcode.bb",
+            "qabbcodeTemp": "/eruhim/interviews/qa-bbcode.bb"
+        },
+        "suggest": {
+            "templateFile": "/eruhim/suggest/template.txt",
+            "bbcodeTemplateFile": "/eruhim/suggest/bbcode.bb"
+        }
     }
 }

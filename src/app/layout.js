@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "public/MainStyle.css";
+import Head from "next/head";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,6 +21,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="he" dir="rtl">
+      <Head>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap&subset=hebrew" rel="stylesheet" />
+        <style>{`body { font-family: 'Open Sans', 'Open Sans Hebrew', Arial, sans-serif !important; }`}</style>
+      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

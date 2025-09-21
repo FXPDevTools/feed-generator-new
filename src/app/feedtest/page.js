@@ -69,12 +69,12 @@ function ArticleGeneratorComponent() {
     const [relevantLink, setRelevantLink] = useState(''); // %RelevantLink%
     const [source, setSource] = useState(''); // %Source%
     const [forumName, setForumName] = useState('פורום 1'); // %ForumName%
-
     // --- States for generated outputs, preview, and editor ---
     const [generatedHtml, setGeneratedHtml] = useState('');
     const [generatedBBcode, setBBcode] = useState(''); // Your new state for BBCode
     const [previewContent, setPreviewContent] = useState('');
     const contentRef = useRef(null);
+    // ...existing code...
     const [editorColor, setEditorColor] = useState('#000000');
     const [editorSize, setEditorSize] = useState(3);
 
