@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const panelKeys = [
   { key: 'feed', label: 'פאנל פיד' },
@@ -8,10 +8,9 @@ const panelKeys = [
   { key: 'admin', label: 'פאנל אדמין' },
 ];
 
-import { useRouter } from 'next/navigation';
-
 export default function ManageCodes() {
   const [codes, setCodes] = useState([]);
+  const [originalCodes, setOriginalCodes] = useState([]);
   const [newCode, setNewCode] = useState('');
   const [newRole, setNewRole] = useState('');
   const [newPanels, setNewPanels] = useState([]);
@@ -22,7 +21,8 @@ export default function ManageCodes() {
     fetch('/api/panel/get-access')
       .then(res => res.json())
       .then(data => {
-        setCodes(data);
+  setCodes(data);
+  setOriginalCodes(data);
         const found = data.find(item => item.code === code);
         setRole(found ? found.role : '');
       })
@@ -35,19 +35,23 @@ export default function ManageCodes() {
 
   const handleAddCode = () => {
     if (!newCode || !newRole || newPanels.length === 0) return;
-    setCodes([...codes, { code: newCode, role: newRole, panels: newPanels }]);
+  setCodes([...codes, { code: newCode, role: newRole, panels: newPanels }]);
     setNewCode('');
     setNewRole('');
     setNewPanels([]);
   };
 
   const handleDeleteCode = (code) => {
-    setCodes(codes.filter(c => c.code !== code));
+  setCodes(codes.filter(c => c.code !== code));
   };
+
 
   const handlePanelToggle = (code, panel) => {
     setCodes(codes.map(c => c.code === code ? { ...c, panels: c.panels.includes(panel) ? c.panels.filter(p => p !== panel) : [...c.panels, panel] } : c));
   };
+
+  // Detect unsaved changes (always up to date)
+  const isChanged = JSON.stringify(codes) !== JSON.stringify(originalCodes);
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center p-8 bg-transparent text-white">
@@ -99,6 +103,7 @@ export default function ManageCodes() {
                       });
                       if (res.ok) {
                         alert('השינויים נשמרו בהצלחה!');
+                        setOriginalCodes(codes);
                       } else {
                         alert('שגיאה בשמירה: ' + (await res.text()));
                       }
@@ -164,6 +169,7 @@ export default function ManageCodes() {
           </table>
           <button
             onClick={async () => {
+              if (!isChanged) return;
               const res = await fetch('/api/panel/save-access', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -171,12 +177,14 @@ export default function ManageCodes() {
               });
               if (res.ok) {
                 alert('השינויים נשמרו בהצלחה!');
+                setOriginalCodes(codes);
               } else {
                 alert('שגיאה בשמירה: ' + (await res.text()));
               }
             }}
-            className="w-full border border-gray-500 text-gray-300 font-semibold py-2 rounded mt-8 hover:bg-gray-700 transition"
-            style={{ boxShadow: 'none', background: 'transparent' }}
+            disabled={!isChanged}
+            className={`w-full font-semibold py-2 rounded mt-8 transition border ${isChanged ? 'bg-green-600 text-white border-green-700 hover:bg-green-700' : 'bg-gray-700 text-gray-400 border-gray-500 cursor-not-allowed'}`}
+            style={{ boxShadow: 'none' }}
           >
             שמור שינויים
           </button>

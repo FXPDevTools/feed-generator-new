@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LeaderLayout({ children }) {
+export default function AccessLayout({ children }) {
   const [allowed, setAllowed] = useState(null);
   const router = useRouter();
 
@@ -16,7 +16,7 @@ export default function LeaderLayout({ children }) {
       .then((res) => res.json())
       .then((data) => {
         const found = data.find((item) => item.code === code);
-        if (found && found.panels.includes("leader")) {
+        if (found && (found.panels.includes("admin") || found.panels.includes("leader"))) {
           setAllowed(true);
         } else {
           setAllowed(false);
@@ -31,8 +31,8 @@ export default function LeaderLayout({ children }) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center p-8 bg-transparent text-white">
         <div className="max-w-xl w-full bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col gap-8 items-center">
-          <h1 className="text-3xl mb-4 font-bold text-red-500">אתה לא ראש צוות</h1>
-          <p className="text-lg text-gray-300">אין לך הרשאה לגשת לפאנל זה.</p>
+          <h1 className="text-3xl mb-4 font-bold text-red-500">אין לך הרשאה</h1>
+          <p className="text-lg text-gray-300">גישה לדף זה מותרת רק לאדמין או ראש צוות.</p>
         </div>
       </main>
     );

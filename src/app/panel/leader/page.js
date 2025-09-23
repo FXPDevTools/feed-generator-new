@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 export default function LeaderPanel() {
   const [allowedPanels, setAllowedPanels] = useState([]);
   const [role, setRole] = useState('');
-  const router = useRouter();
 
   useEffect(() => {
     const code = sessionStorage.getItem('panelCode');
