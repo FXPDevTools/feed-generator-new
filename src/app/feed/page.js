@@ -120,7 +120,8 @@ function ArticleGeneratorComponent() {
             const media = processMediaLink(imageLink);
 
             // --- Additional Links Logic ---
-            const additionalLinksFilled = threads.every(thread => thread.title && thread.link);
+            // Block appears only if ALL 5 links AND ALL 5 titles are filled
+            const additionalLinksFilled = threads.every(thread => thread.title.trim() && thread.link.trim());
             const forumFilled = forumName !== 'בחירת פורום';
             const forumOrLinksFilled = forumFilled || additionalLinksFilled;
 
