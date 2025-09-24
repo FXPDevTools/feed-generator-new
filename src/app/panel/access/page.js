@@ -21,6 +21,7 @@ export default function ManageCodes({ role }) {
     fetch('/api/panel/admin/access/get')
       .then(res => res.json())
       .then(data => {
+        console.log('Fetched access codes:', data);
         setCodes(data);
         setOriginalCodes(data);
       })

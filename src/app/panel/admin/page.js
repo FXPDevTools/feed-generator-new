@@ -2,32 +2,15 @@
 
 import PanelButton from '../hooks/PanelButton';
 import PanelFrame from '../PanelFrame';
+import usePanelCodeInfo from '../hooks/usePanelCodeInfo';
 
-export default function AdminPanel({ role }) {
-  const actions = (() => {
-    const buttons = [
-      { href: "/panel/access", label: "ניהול גישות", className: "bg-gray-700 hover:bg-gray-800 text-gray-200" },
-      { href: "/panel/admin/credits", label: "ניהול קרדיטים בפוטר", className: "bg-blue-700 hover:bg-blue-800 text-blue-200" },
-    ];
-    const rows = [];
-    for (let i = 0; i < buttons.length; i += 2) {
-      const row = buttons.slice(i, i + 2);
-      row.forEach((btn, j) => {
-        rows.push(
-          <PanelButton
-            as="a"
-            href={btn.href}
-            key={btn.href}
-            className={`text-xl text-center rounded-lg shadow-md font-bold ${btn.className}` + (row.length === 1 ? " col-span-2" : "")}
-          >
-            {btn.label}
-          </PanelButton>
-        );
-      });
-    }
-    return rows;
-  })();
-
+export default function AdminPanel() {
+  const info = usePanelCodeInfo();
+  const role = info?.role || '';
+  const actions = [
+    <PanelButton as="a" href="/panel/access" key="access" className="text-xl text-center rounded-lg shadow-md font-bold bg-gray-700 hover:bg-gray-800 text-gray-200">ניהול גישות</PanelButton>,
+    <PanelButton as="a" href="/panel/admin/credits" key="credits" className="text-xl text-center rounded-lg shadow-md font-bold bg-blue-700 hover:bg-blue-800 text-blue-200">ניהול קרדיטים בפוטר</PanelButton>
+  ];
   return (
     <PanelFrame title="פאנל אדמין" role={role} actions={actions} />
   );

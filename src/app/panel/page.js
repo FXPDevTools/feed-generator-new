@@ -3,7 +3,7 @@
 import PanelButton from './hooks/PanelButton';
 import { useRouter } from 'next/navigation';
 import PanelFrame from './PanelFrame';
-import { useEffect, useState } from 'react';
+import usePanelCodeInfo from './hooks/usePanelCodeInfo';
 
 const panelButtons = [
   { key: 'feed', label: 'פאנל פיד', color: '#3366cc' },
@@ -12,27 +12,11 @@ const panelButtons = [
   { key: 'admin', label: 'פאנל אדמין', color: '#00897b' },
 ];
 
-export default function PanelHome({ role }) {
-  console.log('PanelHome role:', role);
-  const [allowedPanels, setAllowedPanels] = useState([]);
-  const [foundRole, setFoundRole] = useState('');
+export default function PanelHome() {
+  const info = usePanelCodeInfo();
+  const allowedPanels = info?.panels || [];
+  const foundRole = info?.role || '';
   const router = useRouter();
-
-  useEffect(() => {
-    const code = typeof window !== 'undefined' ? sessionStorage.getItem('panelCode') : null;
-    (async () => {
-      try {
-        if (!code) return;
-        const res = await fetch('/api/panel/admin/access/get');
-        const data = await res.json();
-        const found = data.find(item => item.code === code);
-        setAllowedPanels(found && found.panels ? found.panels : []);
-        setFoundRole(found && found.role ? found.role : '');
-      } catch (err) {
-        setAllowedPanels([]);
-      }
-    })();
-  }, []);
 
   const actions = panelButtons
     .filter(btn => allowedPanels.includes(btn.key))
