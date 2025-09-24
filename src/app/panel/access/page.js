@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import PanelFrame from '../PanelFrame';
+import usePanelCodeInfo from '../hooks/usePanelCodeInfo';
 
 const panelKeys = [
   { key: 'feed', label: 'פאנל פיד' },
@@ -10,7 +11,9 @@ const panelKeys = [
   { key: 'admin', label: 'פאנל אדמין' },
 ];
 
-export default function ManageCodes({ role }) {
+export default function ManageCodes() {
+  const info = usePanelCodeInfo();
+  const role = info?.role || '';
   const [codes, setCodes] = useState([]);
   const [originalCodes, setOriginalCodes] = useState([]);
   const [newCode, setNewCode] = useState('');
