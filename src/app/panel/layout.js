@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AuthGate from "./auth/AuthGate";
+import React from "react";
 
 import { usePathname } from "next/navigation";
 
@@ -23,14 +24,20 @@ export default function PanelLayoutWrapper({ children }) {
     })();
   }, []);
 
+  // Always pass role as prop to all children
+  const childrenWithRole = React.Children.map(children, child =>
+    React.isValidElement(child)
+      ? React.cloneElement(child, { role })
+      : child
+  );
+
   if (usePathname() == "/panel/login") {
-    return <>{children}</>;
+    return <>{childrenWithRole}</>;
   }
 
-  // Pass role as prop to children (using React.cloneElement for single child)
   return (
     <AuthGate>
-      {children}
+      {childrenWithRole}
     </AuthGate>
   );
 }

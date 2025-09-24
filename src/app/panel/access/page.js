@@ -85,7 +85,7 @@ export default function ManageCodes({ role }) {
             </tr>
           </thead>
           <tbody>
-            {codes
+            {codes && codes
               .filter(code => role === 'אדמין' || (role === 'ראש צוות' && code.editableByLeader))
               .map((code, idx) => {
                 const handleCodeChange = (e) => {

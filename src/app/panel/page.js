@@ -13,7 +13,9 @@ const panelButtons = [
 ];
 
 export default function PanelHome({ role }) {
+  console.log('PanelHome role:', role);
   const [allowedPanels, setAllowedPanels] = useState([]);
+  const [foundRole, setFoundRole] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -25,6 +27,7 @@ export default function PanelHome({ role }) {
         const data = await res.json();
         const found = data.find(item => item.code === code);
         setAllowedPanels(found && found.panels ? found.panels : []);
+        setFoundRole(found && found.role ? found.role : '');
       } catch (err) {
         setAllowedPanels([]);
       }
@@ -46,7 +49,7 @@ export default function PanelHome({ role }) {
     ));
 
   return (
-    <PanelFrame title="מרכז הפאנלים" role={role} actions={actions}>
+    <PanelFrame title="מרכז הפאנלים" role={foundRole} actions={actions}>
       <PanelButton
         onClick={() => {
           sessionStorage.removeItem('panelCode');
