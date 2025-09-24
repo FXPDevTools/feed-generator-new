@@ -2,11 +2,9 @@
 
 
 import PanelLayout from '../PanelLayout';
-import PanelButton from '../PanelButton';
 
 export default function EruhimPanel() {
   return (
-    <PanelLayout title="פאנל אחראי אירוחים">
       <div className="w-full grid grid-cols-2 gap-4">
         {(() => {
           const buttons = [
@@ -32,6 +30,5 @@ export default function EruhimPanel() {
           return rows;
         })()}
       </div>
-    </PanelLayout>
   );
 }

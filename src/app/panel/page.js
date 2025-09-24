@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import PanelButton from './PanelButton';
+
+import PanelButton from './hooks/PanelButton';
 import { useRouter } from 'next/navigation';
-import PanelLayout from './PanelLayout';
+
 
 const panelButtons = [
   { key: 'feed', label: 'פאנל פיד', color: '#3366cc' },
@@ -12,42 +12,11 @@ const panelButtons = [
   { key: 'admin', label: 'פאנל אדמין', color: '#00897b' },
 ];
 
-export default function PanelHome() {
-  const [allowedPanels, setAllowedPanels] = useState([]);
-  const [role, setRole] = useState('');
-  const [checked, setChecked] = useState(false);
+
+export default function PanelHome({ allowedPanels, role }) {
   const router = useRouter();
-
-
-  useEffect(() => {
-    const code = sessionStorage.getItem('panelCode');
-    if (!code) {
-      router.push('/panel/login');
-      setTimeout(() => setChecked(true), 0); // ensure rerender after navigation
-      return;
-    }
-    (async () => {
-      try {
-  const res = await fetch('/api/panel/admin/access/get');
-        const data = await res.json();
-        const found = data.find(item => item.code === code);
-        setAllowedPanels(found && found.panels ? found.panels : []);
-        setRole(found && found.role ? found.role : '');
-      } catch (err) {
-        setAllowedPanels([]);
-        setRole('');
-      } finally {
-        setChecked(true);
-      }
-    })();
-  }, [router]);
-
-  if (!checked) return (
-    <div className="flex items-center justify-center min-h-[200px] text-lg text-gray-400">טוען...</div>
-  );
-
   return (
-    <PanelLayout title="מרכז הפאנלים" role={role}>
+    <>
       <div className="w-full grid grid-cols-2 gap-4 px-0" dir="rtl">
         {(() => {
           const filtered = panelButtons.filter(btn => allowedPanels.includes(btn.key));
@@ -83,6 +52,6 @@ export default function PanelHome() {
       >
         ניתוק
       </PanelButton>
-    </PanelLayout>
+    </>
   );
 }

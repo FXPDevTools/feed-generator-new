@@ -1,7 +1,7 @@
 "use client";
 
-import PanelButton from '../PanelButton';
-import PanelLayout from '../PanelLayout';
+import PanelButton from '../hooks/PanelButton';
+import PanelLayout from '../hooks/PanelLayout';
 
 export default function LeaderPanel() {
   return (

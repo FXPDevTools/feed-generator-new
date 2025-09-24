@@ -1,38 +1,44 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 
-export default function PanelLayout({ children }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [checked, setChecked] = useState(false);
+import { useEffect, useState } from "react";
+import AuthGate from "./auth/AuthGate";
+import PanelLayout from "./hooks/PanelLayout";
+import { usePathname } from "next/navigation";
+
+export default function PanelLayoutWrapper({ children }) {
+  const [allowedPanels, setAllowedPanels] = useState([]);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
-    if (pathname === "/panel/login") {
-      setChecked(true);
-      return;
-    }
-    const code = sessionStorage.getItem("panelCode");
-    if (!code) {
-      router.push("/panel/login");
-      return;
-    }
+    const code = typeof window !== 'undefined' ? sessionStorage.getItem('panelCode') : null;
     (async () => {
-  const res = await fetch("/api/panel/admin/access/get");
-      const data = await res.json();
-      const found = data.find(item => item.code === code);
-      if (!found || !found.panels || found.panels.length === 0) {
-        router.push("/panel/login");
-      } else {
-        setChecked(true);
+      try {
+        if (!code) return;
+        const res = await fetch('/api/panel/admin/access/get');
+        const data = await res.json();
+        const found = data.find(item => item.code === code);
+        setAllowedPanels(found && found.panels ? found.panels : []);
+        setRole(found && found.role ? found.role : '');
+      } catch (err) {
+        setAllowedPanels([]);
+        setRole('');
       }
     })();
-  }, [router, pathname]);
+  }, []);
 
-  if (!checked) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px] text-lg text-gray-400">טוען...</div>
-    );
+  if (usePathname() == "/panel/login") {
+    return <>{children}</>;
   }
-  return <>{children}</>;
+
+  return (
+    <AuthGate>
+      <PanelLayout title="לוח בקרה" role={role} actions={
+        allowedPanels.map(panel => (
+          <PanelButton key={panel} panel={panel} />
+        ))
+      }>
+        {children}
+      </PanelLayout>
+    </AuthGate>
+  );
 }

@@ -1,11 +1,9 @@
 "use client";
 
-import PanelButton from '../PanelButton';
-import PanelLayout from '../PanelLayout';
+import PanelButton from '../hooks/PanelButton';
 
 export default function AdminPanel() {
   return (
-    <PanelLayout title="פאנל אדמין">
       <div className="w-full grid grid-cols-2 gap-4">
         {(() => {
           const buttons = [
@@ -34,6 +32,5 @@ export default function AdminPanel() {
           return rows;
         })()}
       </div>
-    </PanelLayout>
   );
 }

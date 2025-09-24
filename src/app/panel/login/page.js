@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function PanelLogin() {
@@ -7,17 +7,51 @@ export default function PanelLogin() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  // Shared helper to fetch panels for a given access code
+  const getPanelsForCode = async (codeToCheck) => {
+    const res = await fetch('/api/panel/admin/access/get');
+    if (!res.ok) throw new Error('Failed to load access list');
+    const data = await res.json();
+    const found = data.find(item => item.code === codeToCheck);
+    return {
+      found,
+      panels: found ? (Array.isArray(found.panels) ? found.panels : []) : []
+    };
+  };
+
+  // If there's an active session code and it's valid, redirect to the panel
+  useEffect(() => {
+    const storedCode = sessionStorage.getItem('panelCode');
+    if (!storedCode) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { found, panels } = await getPanelsForCode(storedCode);
+        if (!cancelled && panels.length > 0) {
+          router.replace('/panel');
+        } else if (!found) {
+          // Clean up invalid/expired code
+          sessionStorage.removeItem('panelCode');
+        }
+      } catch (e) {
+        // Silently ignore to allow manual login
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     try {
-  const res = await fetch('/api/panel/admin/access/get');
-      const data = await res.json();
-      const found = data.find(item => item.code === code);
-      const panels = found ? found.panels : [];
+      const { panels } = await getPanelsForCode(code);
       if (panels && panels.length > 0) {
         sessionStorage.setItem('panelCode', code);
-        router.push('/panel');
+        router.replace('/panel');
       } else {
         setError('קוד לא תקין');
       }

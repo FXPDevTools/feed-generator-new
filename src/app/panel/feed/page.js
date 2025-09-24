@@ -1,11 +1,10 @@
 "use client";
 
 import PanelLayout from '../PanelLayout';
-import PanelButton from '../PanelButton';
+import PanelButton from '../hooks/PanelButton';
 
 export default function FeedPanel() {
   return (
-    <PanelLayout title="פאנל עורך פיד">
       <div className="w-full grid grid-cols-2 gap-4">
         {(() => {
           const buttons = [
@@ -31,6 +30,5 @@ export default function FeedPanel() {
           return rows;
         })()}
       </div>
-    </PanelLayout>
   );
 }
