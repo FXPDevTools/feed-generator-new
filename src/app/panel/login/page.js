@@ -11,7 +11,7 @@ export default function PanelLogin() {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('/api/panel/get-access');
+  const res = await fetch('/api/panel/admin/access/get');
       const data = await res.json();
       const found = data.find(item => item.code === code);
       const panels = found ? found.panels : [];

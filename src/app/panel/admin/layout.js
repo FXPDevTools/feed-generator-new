@@ -13,7 +13,7 @@ export default function AdminLayout({ children }) {
       return;
     }
     (async () => {
-      const res = await fetch("/api/panel/get-access");
+  const res = await fetch("/api/panel/admin/access/get");
       const data = await res.json();
       const found = data.find(item => item.code === code);
       if (!found || !found.panels.includes("admin")) {

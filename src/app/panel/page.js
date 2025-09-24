@@ -28,7 +28,7 @@ export default function PanelHome() {
     }
     (async () => {
       try {
-        const res = await fetch('/api/panel/get-access');
+  const res = await fetch('/api/panel/admin/access/get');
         const data = await res.json();
         const found = data.find(item => item.code === code);
         setAllowedPanels(found && found.panels ? found.panels : []);

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const CREDITS_PATH = "/panel/admin/credits.json";
+const CREDITS_PATH = "/api/panel/admin/credits/get";
 
 export default function CreditsAdmin() {
   const [credits, setCredits] = useState([]);
@@ -56,7 +56,7 @@ export default function CreditsAdmin() {
   };
 
   const saveCredits = async (data) => {
-    await fetch("/api/panel/admin/save-credits", {
+  await fetch("/api/panel/admin/credits/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

@@ -18,7 +18,7 @@ export default function ManageCodes() {
   useEffect(() => {
     const code = sessionStorage.getItem('panelCode');
     if (!code) return;
-    fetch('/api/panel/get-access')
+  fetch('/api/panel/admin/access/get')
       .then(res => res.json())
       .then(data => {
   setCodes(data);
@@ -96,7 +96,7 @@ export default function ManageCodes() {
                   const handleCodeKeyDown = async (e) => {
                     if (e.key === 'Enter') {
                       // מפעיל את שמירת השינויים
-                      const res = await fetch('/api/panel/save-access', {
+                      const res = await fetch('/api/panel/admin/access/save', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(codes)
@@ -170,7 +170,7 @@ export default function ManageCodes() {
           <button
             onClick={async () => {
               if (!isChanged) return;
-              const res = await fetch('/api/panel/save-access', {
+              const res = await fetch('/api/panel/admin/access/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(codes)
