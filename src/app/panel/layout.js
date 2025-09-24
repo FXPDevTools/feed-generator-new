@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import AuthGate from "./auth/AuthGate";
-import PanelLayout from "./hooks/PanelLayout";
+
 import { usePathname } from "next/navigation";
 
 export default function PanelLayoutWrapper({ children }) {
-  const [allowedPanels, setAllowedPanels] = useState([]);
   const [role, setRole] = useState("");
 
   useEffect(() => {
@@ -17,10 +16,8 @@ export default function PanelLayoutWrapper({ children }) {
         const res = await fetch('/api/panel/admin/access/get');
         const data = await res.json();
         const found = data.find(item => item.code === code);
-        setAllowedPanels(found && found.panels ? found.panels : []);
         setRole(found && found.role ? found.role : '');
       } catch (err) {
-        setAllowedPanels([]);
         setRole('');
       }
     })();
@@ -30,15 +27,10 @@ export default function PanelLayoutWrapper({ children }) {
     return <>{children}</>;
   }
 
+  // Pass role as prop to children (using React.cloneElement for single child)
   return (
     <AuthGate>
-      <PanelLayout title="לוח בקרה" role={role} actions={
-        allowedPanels.map(panel => (
-          <PanelButton key={panel} panel={panel} />
-        ))
-      }>
-        {children}
-      </PanelLayout>
+      {children}
     </AuthGate>
   );
 }

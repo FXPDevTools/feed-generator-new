@@ -14,7 +14,7 @@ export default function PanelButton({
   return (
     <Comp
       {...extraProps}
-      className={`px-5 py-2 rounded-lg font-semibold shadow transition-all duration-150 focus:outline-none focus:ring-2 ${className}`}
+      className={`block w-full px-5 py-2 rounded-lg font-semibold shadow transition-all duration-150 focus:outline-none focus:ring-2 ${className}`}
       style={style}
       {...rest}
     >

@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, useRef } from 'react';
+
+import PanelFrame from '../PanelFrame';
 
 const panelKeys = [
   { key: 'feed', label: 'פאנל פיד' },
@@ -8,23 +9,21 @@ const panelKeys = [
   { key: 'admin', label: 'פאנל אדמין' },
 ];
 
-export default function ManageCodes() {
+export default function ManageCodes({ role }) {
   const [codes, setCodes] = useState([]);
   const [originalCodes, setOriginalCodes] = useState([]);
   const [newCode, setNewCode] = useState('');
   const [newRole, setNewRole] = useState('');
   const [newPanels, setNewPanels] = useState([]);
-  const [role, setRole] = useState('');
+  // role מגיע מה-layout
   useEffect(() => {
     const code = sessionStorage.getItem('panelCode');
     if (!code) return;
-  fetch('/api/panel/admin/access/get')
+    fetch('/api/panel/admin/access/get')
       .then(res => res.json())
       .then(data => {
-  setCodes(data);
-  setOriginalCodes(data);
-        const found = data.find(item => item.code === code);
-        setRole(found ? found.role : '');
+        setCodes(data);
+        setOriginalCodes(data);
       })
       .catch(() => setCodes([]));
   }, []);
@@ -54,50 +53,48 @@ export default function ManageCodes() {
   const isChanged = JSON.stringify(codes) !== JSON.stringify(originalCodes);
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center p-8 bg-transparent text-white">
-      <div className="max-w-2xl w-full bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col gap-8 items-center">
-        <h1 className="text-3xl mb-4 font-bold">ניהול קודי גישה</h1>
-        {role === 'אדמין' && (
-          <div className="w-full mb-8">
-            <h2 className="text-xl mb-2">הוספת קוד חדש</h2>
-            <input value={newCode} onChange={e => setNewCode(e.target.value)} placeholder="קוד חדש" className="w-full p-2 mb-2 rounded bg-gray-700 text-white" />
-            <input value={newRole} onChange={e => setNewRole(e.target.value)} placeholder="שם דרגה" className="w-full p-2 mb-2 rounded bg-gray-700 text-white" />
-            <div className="flex gap-2 mb-2">
-              {panelKeys.map(panel => (
-                <label key={panel.key} className="flex items-center gap-1">
-                  <input type="checkbox" checked={newPanels.includes(panel.key)} onChange={() => handlePanelChange(panel.key)} />
-                  {panel.label}
-                </label>
-              ))}
-            </div>
-            <button onClick={handleAddCode} className="bg-blue-600 px-4 py-2 rounded">הוסף קוד</button>
+    <PanelFrame title="ניהול קודי גישה" role={role}>
+      {role === 'אדמין' && (
+        <div className="w-full mb-8">
+          <h2 className="text-xl mb-2">הוספת קוד חדש</h2>
+          <input value={newCode} onChange={e => setNewCode(e.target.value)} placeholder="קוד חדש" className="w-full p-2 mb-2 rounded bg-gray-700 text-white" />
+          <input value={newRole} onChange={e => setNewRole(e.target.value)} placeholder="שם דרגה" className="w-full p-2 mb-2 rounded bg-gray-700 text-white" />
+          <div className="flex gap-2 mb-2">
+            {panelKeys.map(panel => (
+              <label key={panel.key} className="flex items-center gap-1">
+                <input type="checkbox" checked={newPanels.includes(panel.key)} onChange={() => handlePanelChange(panel.key)} />
+                {panel.label}
+              </label>
+            ))}
           </div>
-        )}
-        <div className="w-full">
-          <h2 className="text-xl mb-2">קודים קיימים</h2>
-          <table className="w-full text-right">
-            <thead>
-              <tr>
-                <th>קוד</th>
-                <th>דרגה</th>
-                {role === 'אדמין' && <th>פאנלים</th>}
-                {role === 'אדמין' && <th>אישור עריכת ראש</th>}
-                {role === 'אדמין' && <th>מחיקה</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {codes
-                .filter(code => role === 'אדמין' || (role === 'ראש צוות' && code.editableByLeader))
-                .map((code, idx) => {
-                  const handleCodeChange = (e) => {
-                    const newVal = e.target.value;
-                    setCodes(prev => prev.map((c, i) => i === idx ? { ...c, code: newVal } : c));
-                  };
-                  const handleCodeKeyDown = async (e) => {
-                    if (e.key === 'Enter') {
-                      // מפעיל את שמירת השינויים
-                      const res = await fetch('/api/panel/admin/access/save', {
-                        method: 'POST',
+          <button onClick={handleAddCode} className="bg-blue-600 px-4 py-2 rounded">הוסף קוד</button>
+        </div>
+      )}
+      <div className="w-full">
+        <h2 className="text-xl mb-2">קודים קיימים</h2>
+        <table className="w-full text-right">
+          <thead>
+            <tr>
+              <th>קוד</th>
+              <th>דרגה</th>
+              {role === 'אדמין' && <th>פאנלים</th>}
+              {role === 'אדמין' && <th>אישור עריכת ראש</th>}
+              {role === 'אדמין' && <th>מחיקה</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {codes
+              .filter(code => role === 'אדמין' || (role === 'ראש צוות' && code.editableByLeader))
+              .map((code, idx) => {
+                const handleCodeChange = (e) => {
+                  const newVal = e.target.value;
+                  setCodes(prev => prev.map((c, i) => i === idx ? { ...c, code: newVal } : c));
+                };
+                const handleCodeKeyDown = async (e) => {
+                  if (e.key === 'Enter') {
+                    // מפעיל את שמירת השינויים
+                    const res = await fetch('/api/panel/admin/access/save', {
+                      method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(codes)
                       });
@@ -189,7 +186,6 @@ export default function ManageCodes() {
             שמור שינויים
           </button>
         </div>
-      </div>
-    </main>
+      </PanelFrame>
   );
 }
