@@ -1,7 +1,73 @@
 "use client";
 import { useEffect, useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const CREDITS_PATH = "/api/panel/admin/credits/get";
+
+// רכיב קרדיט בר-גרירה
+function SortableCredit({ credit, index, onEdit, onDelete }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: `credit-${index}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <li 
+      ref={setNodeRef} 
+      style={style} 
+      className="flex items-center gap-2 bg-gray-700 rounded p-2 cursor-move"
+      {...attributes} 
+      {...listeners}
+    >
+      <span className="flex-1">{credit.nick} (<a href={credit.profile} className="underline text-blue-300" target="_blank">פרופיל</a>)</span>
+      <button 
+        className="px-2 py-1 bg-yellow-600 rounded" 
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(index);
+        }}
+      >
+        ערוך
+      </button>
+      <button 
+        className="px-2 py-1 bg-red-700 rounded" 
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(index);
+        }}
+      >
+        מחק
+      </button>
+    </li>
+  );
+}
 
 export default function CreditsAdmin() {
   const [credits, setCredits] = useState([]);
@@ -9,6 +75,13 @@ export default function CreditsAdmin() {
   const [form, setForm] = useState({ nick: "", profile: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     fetch(CREDITS_PATH)
@@ -19,6 +92,21 @@ export default function CreditsAdmin() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setCredits((items) => {
+        const oldIndex = items.findIndex((_, i) => `credit-${i}` === active.id);
+        const newIndex = items.findIndex((_, i) => `credit-${i}` === over.id);
+        
+        const newCredits = arrayMove(items, oldIndex, newIndex);
+        saveCredits(newCredits); // שמור את הסדר החדש
+        return newCredits;
+      });
+    }
+  };
 
   const handleEdit = (idx) => {
     setEditIdx(idx);
@@ -38,9 +126,11 @@ export default function CreditsAdmin() {
       return;
     }
     let newCredits = [...credits];
-    if (editIdx !== null) {
+    if (editIdx >= 0) {
+      // עריכה של קרדיט קיים
       newCredits[editIdx] = { ...form };
     } else {
+      // הוספת קרדיט חדש
       newCredits.push({ ...form });
     }
     setCredits(newCredits);
@@ -51,8 +141,9 @@ export default function CreditsAdmin() {
   };
 
   const handleAdd = () => {
-    setEditIdx(null);
+    setEditIdx(-1); // -1 מציין הוספה חדשה
     setForm({ nick: "", profile: "" });
+    setError("");
   };
 
   const saveCredits = async (data) => {
@@ -70,17 +161,36 @@ export default function CreditsAdmin() {
       <div className="max-w-xl w-full bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col gap-8 items-center">
         <h1 className="text-3xl mb-4 font-bold">ניהול קרדיטים בפוטר</h1>
         <button className="mb-4 px-4 py-2 bg-blue-700 rounded" onClick={handleAdd}>הוסף משתמש</button>
-        <ul className="w-full flex flex-col gap-2">
-          {credits.map((c, i) => (
-            <li key={i} className="flex items-center gap-2 bg-gray-700 rounded p-2">
-              <span className="flex-1">{c.nick} (<a href={c.profile} className="underline text-blue-300" target="_blank">פרופיל</a>)</span>
-              <button className="px-2 py-1 bg-yellow-600 rounded" onClick={() => handleEdit(i)}>ערוך</button>
-              <button className="px-2 py-1 bg-red-700 rounded" onClick={() => handleDelete(i)}>מחק</button>
-            </li>
-          ))}
-        </ul>
+        <div className="w-full">
+          <p className="text-sm text-gray-400 mb-2">ניתן לגרור כדי לשנות סדר</p>
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext 
+              items={credits.map((_, i) => `credit-${i}`)}
+              strategy={verticalListSortingStrategy}
+            >
+              <ul className="flex flex-col gap-2">
+                {credits.map((credit, i) => (
+                  <SortableCredit
+                    key={`credit-${i}`}
+                    credit={credit}
+                    index={i}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
+        </div>
         {(editIdx !== null || form.nick || form.profile) && (
           <div className="w-full bg-gray-900 p-4 rounded flex flex-col gap-2 mt-4">
+            <h3 className="text-lg font-semibold">
+              {editIdx >= 0 ? 'עריכת קרדיט' : 'הוספת קרדיט חדש'}
+            </h3>
             <input
               className="p-2 rounded bg-gray-800 text-white"
               placeholder="ניק"
@@ -94,7 +204,21 @@ export default function CreditsAdmin() {
               onChange={e => setForm(f => ({ ...f, profile: e.target.value }))}
             />
             {error && <div className="text-red-400">{error}</div>}
-            <button className="mt-2 px-4 py-2 bg-green-700 rounded" onClick={handleSave}>שמור</button>
+            <div className="flex gap-2">
+              <button className="px-4 py-2 bg-green-700 rounded" onClick={handleSave}>
+                {editIdx >= 0 ? 'עדכן' : 'הוסף'}
+              </button>
+              <button 
+                className="px-4 py-2 bg-gray-600 rounded" 
+                onClick={() => {
+                  setEditIdx(null);
+                  setForm({ nick: "", profile: "" });
+                  setError("");
+                }}
+              >
+                ביטול
+              </button>
+            </div>
           </div>
         )}
       </div>
