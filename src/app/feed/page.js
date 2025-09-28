@@ -45,6 +45,21 @@ const processMediaLink = (url) => {
     };
 };
 
+// Normalize BBCode whitespace: collapse large gaps and trim edges
+function normalizeBBCodeSpacing(text) {
+    if (!text) return '';
+    let t = String(text);
+    // Normalize line endings
+    t = t.replace(/\r\n/g, '\n');
+    // Trim trailing spaces on each line
+    t = t.split('\n').map(line => line.replace(/[ \t]+$/g, '')).join('\n');
+    // Collapse 3+ consecutive blank lines into a single blank line
+    t = t.replace(/\n(?:[ \t]*\n){2,}/g, '\n\n');
+    // Trim leading/trailing blank lines
+    t = t.replace(/^\s*\n+/, '').replace(/\n+\s*$/, '');
+    return t;
+}
+
 
 // The main generator component
 function ArticleGeneratorComponent() {
@@ -182,6 +197,16 @@ function ArticleGeneratorComponent() {
             const forumOrLinksFilled = forumFilled || additionalLinksFilled;
 
             // Prepare data object for template processing
+            // Fetch dynamic ErrorUserID setting
+            let errorUserId = '';
+            try {
+                const r = await fetch('/api/panel/leader/settings/error-user', { cache: 'no-store' });
+                if (r.ok) {
+                    const d = await r.json();
+                    errorUserId = d?.id || '';
+                }
+            } catch {}
+
             const templateData = {
                 ArticleTitle: title || 'כותרת',
                 Content: content || 'תוכן',
@@ -191,6 +216,7 @@ function ArticleGeneratorComponent() {
                 Source: source || '',
                 ForumName: forumFilled ? forumName : '',
                 ForumID: forumFilled ? '123' : '', // Default forum ID
+                ErrorUserID: errorUserId,
                 AdditionalLink1: threads[0]?.link || '',
                 AdditionalTitle1: threads[0]?.title || '',
                 AdditionalLink2: threads[1]?.link || '',
@@ -210,7 +236,7 @@ function ArticleGeneratorComponent() {
                     const processedBBCode = simulateTemplateForPreview(currentTemplate.content, templateData, {
                         removeUnknown: false // Keep unknown placeholders for manual editing
                     });
-                    setBBcode(processedBBCode);
+                    setBBcode(normalizeBBCodeSpacing(processedBBCode));
                 } catch (error) {
                     console.error('Error processing new template:', error);
                     setBBcode(`שגיאה בעיבוד התבנית החדשה: ${error.message}`);
@@ -242,6 +268,8 @@ function ArticleGeneratorComponent() {
                     bbcodeTemplate = bbcodeTemplate.replace(/%RelevantLinkDesc%/g, relevantLinkDesc);
                     bbcodeTemplate = bbcodeTemplate.replace(/%RelevantLink%/g, relevantLink);
                     bbcodeTemplate = bbcodeTemplate.replace(/%Source%/g, source);
+                    // Dynamic error user id placeholder for legacy BBCode fallback
+                    bbcodeTemplate = bbcodeTemplate.replace(/%ErrorUserID%/g, errorUserId || '');
                     bbcodeTemplate = bbcodeTemplate.replace(/%ForumName%/g, forumName);
                     bbcodeTemplate = bbcodeTemplate.replace(/%AdditionalLink1%/g, threads[0].link);
                     bbcodeTemplate = bbcodeTemplate.replace(/%AdditionalTitle1%/g, threads[0].title);
@@ -254,7 +282,7 @@ function ArticleGeneratorComponent() {
                     bbcodeTemplate = bbcodeTemplate.replace(/%AdditionalLink5%/g, threads[4].link);
                     bbcodeTemplate = bbcodeTemplate.replace(/%AdditionalTitle5%/g, threads[4].title);
 
-                    setBBcode(bbcodeTemplate);
+                    setBBcode(normalizeBBCodeSpacing(bbcodeTemplate));
                 } catch (error) {
                     console.error('Error generating BBCode:', error);
                     setBBcode(`שגיאה ביצירת BBCode: ${error.message}`);
@@ -278,6 +306,8 @@ function ArticleGeneratorComponent() {
                 htmlTemplate = htmlTemplate.replace(/%RelevantLinkDesc%/g, relevantLinkDesc ? relevantLinkDesc : '');
                 htmlTemplate = htmlTemplate.replace(/%RelevantLink%/g, relevantLink ? relevantLink : '');
                 htmlTemplate = htmlTemplate.replace(/%Source%/g, source ? source : '');
+                // Dynamic error user id placeholder for legacy HTML preview
+                htmlTemplate = htmlTemplate.replace(/%ErrorUserID%/g, errorUserId || '');
                 htmlTemplate = htmlTemplate.replace(/%ForumName%/g, forumFilled ? forumName : '');
                 // אשכולות רלוונטיים
                 htmlTemplate = htmlTemplate.replace(/%AdditionalLink1%/g, threads[0]?.link ? threads[0].link : '');
