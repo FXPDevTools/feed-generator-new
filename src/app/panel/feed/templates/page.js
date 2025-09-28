@@ -212,11 +212,11 @@ export default function TemplatesManagerPage() {
                       <div className="text-xs text-gray-400">{t.is_active ? "🟢 פעילה" : "⚪ לא פעילה"}</div>
                     </button>
                     {!t.is_active && (
-                      <PanelButton className="bg-yellow-600 hover:bg-yellow-700 w-auto px-2 py-1 text-xs" onClick={() => onSetActive(t.id)}>
+                      <PanelButton size="xs" className="bg-yellow-600 hover:bg-yellow-700 w-auto" onClick={() => onSetActive(t.id)}>
                         הגדר פעילה
                       </PanelButton>
                     )}
-                    <PanelButton className="bg-red-600 hover:bg-red-700 w-auto px-2 py-1 text-xs" onClick={() => onDelete(t.id)}>
+                    <PanelButton size="xs" className="bg-red-600 hover:bg-red-700 w-auto" onClick={() => onDelete(t.id)}>
                       מחק
                     </PanelButton>
                   </div>
