@@ -1,6 +1,5 @@
 .bbcode-preview {
   /* Neutralize global font settings inside preview */
-  font-family: "Open Sans Hebrew" !important;
   font-weight: 400 !important; /* baseline */
   color: #000;
 }

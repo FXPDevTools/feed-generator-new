@@ -12,12 +12,6 @@
     --modalHover: --deptSecondColor;
 }
 
-* {
-    font-family: 'Assistant', sans-serif;
-    font-weight: 300;
-    box-sizing: inherit;
-}
-
 *:before,
 *:after {
     box-sizing: inherit;
