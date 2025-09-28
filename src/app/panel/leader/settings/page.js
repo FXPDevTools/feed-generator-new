@@ -50,7 +50,7 @@ export default function LeaderSettingsPage() {
     <PanelFrame title="הגדרות פיד" role={role}>
       <div className="w-full space-y-4">
         <div className="bg-gray-900 p-4 rounded">
-          <h3 className="text-lg font-bold mb-2">משתמש לפנייה ("מצאתם טעות?")</h3>
+          <h3 className="text-lg font-bold mb-2">משתמש לפנייה (&quot;מצאתם טעות?&quot;)</h3>
           <p className="text-sm text-gray-400 mb-2">ניתן להזין ID בלבד או קישור מלא לפרופיל; אנחנו נשמור רק את ה־ID.</p>
           {loading ? (
             <div>טוען…</div>

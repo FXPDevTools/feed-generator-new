@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import depts from 'public/dept-config.json';
 import BackButtons from "../BackButtons";
@@ -100,7 +100,7 @@ function ArticleGeneratorComponent() {
     const [editorSize, setEditorSize] = useState(3);
 
     // --- Template Loading Logic ---
-    const loadTemplate = async () => {
+    const loadTemplate = useCallback(async () => {
         try {
             let templateData = null;
             
@@ -135,12 +135,12 @@ function ArticleGeneratorComponent() {
             setCurrentTemplate(null);
             setTemplateError('');
         }
-    };
+    }, [templateId]);
 
     // Load template on component mount and when templateId changes
     useEffect(() => {
         loadTemplate();
-    }, [templateId]);
+    }, [loadTemplate]);
 
     // --- BBCode editor functions (unchanged) ---
     const applyBbCode = (tag, value, customText = null) => {
