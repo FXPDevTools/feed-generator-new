@@ -4,7 +4,7 @@ import PanelFrame from "../../PanelFrame";
 import PanelButton from "../../hooks/PanelButton";
 import usePanelCodeInfo from "../../hooks/usePanelCodeInfo";
 import { useEffect, useState } from "react";
-import { authenticatedFetch } from "../../../../lib/api-client.js";
+import { authenticatedFetch } from "../../../../../lib/api-client.js";
 
 export default function LeaderSettingsPage() {
   const info = usePanelCodeInfo();

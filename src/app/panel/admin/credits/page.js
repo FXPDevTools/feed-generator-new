@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { authenticatedFetch } from "../../../../lib/api-client.js";
+import { authenticatedFetch } from "../../../../../lib/api-client.js";
 import {
   DndContext,
   closestCenter,

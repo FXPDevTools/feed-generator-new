@@ -1,5 +1,5 @@
-import { getAccessList } from '../../../../../../../lib/access-db.js';
-import { withPanelAuth } from '../../../../../../../lib/api-auth.js';
+import { getAccessList } from '../../../../../../lib/access-db.js';
+import { withPanelAuth } from '../../../../../../lib/api-auth.js';
 export const runtime = 'nodejs';
 
 export async function GET(request) {

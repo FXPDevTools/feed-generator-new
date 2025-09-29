@@ -1,6 +1,6 @@
-import { addAccessCode } from '../../../../../../../lib/access-db.js';
-import { pool } from '../../../../../../../lib/db.js';
-import { withPanelAuth } from '../../../../../../../lib/api-auth.js';
+import { addAccessCode } from '../../../../../../lib/access-db.js';
+import { pool } from '../../../../../../lib/db.js';
+import { withPanelAuth } from '../../../../../../lib/api-auth.js';
 export const runtime = 'nodejs';
 
 export async function POST(request) {

@@ -1,4 +1,4 @@
-import { getAccessList } from '../../../../../../../lib/access-db.js';
+import { getAccessList } from '../../../../../lib/access-db.js';
 export const runtime = 'nodejs';
 
 // Public API for login verification
