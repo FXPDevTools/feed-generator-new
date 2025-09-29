@@ -55,6 +55,9 @@ export async function DELETE(_request, { params }) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
+    if (error && error.message === 'Cannot delete active template') {
+      return NextResponse.json({ error: 'Cannot delete active template' }, { status: 400 });
+    }
     console.error('[bbcode-templates/:id][DELETE]', error);
     return NextResponse.json({ error: 'Failed to delete template' }, { status: 500 });
   }

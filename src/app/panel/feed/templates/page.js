@@ -216,9 +216,15 @@ export default function TemplatesManagerPage() {
                         הגדר פעילה
                       </PanelButton>
                     )}
-                    <PanelButton className="bg-red-600 hover:bg-red-700 w-[200px]" onClick={() => onDelete(t.id)}>
-                      מחק
-                    </PanelButton>
+                    {!t.is_active ? (
+                      <PanelButton className="bg-red-600 hover:bg-red-700 w-[200px]" onClick={() => onDelete(t.id)}>
+                        מחק
+                      </PanelButton>
+                    ) : (
+                      <PanelButton className="bg-gray-500 cursor-not-allowed w-[200px]" disabled>
+                        לא ניתן למחוק
+                      </PanelButton>
+                    )}
                   </div>
                 </div>
               ))}
