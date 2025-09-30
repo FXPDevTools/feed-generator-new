@@ -216,10 +216,13 @@ function EruhimGenerator() {
                 });
                 // Insert Q&A block
                 main = main.replace(/\{QNA_BLOCK\}/g, qnaBbcodeBlock);
-                // Placeholders
-                main = replaceBoth(main, 'GuestName', guestName || '');
-                main = replaceBoth(main, 'GuestTopic', guestTopic || '');
-                main = replaceBoth(main, 'Biography', biography || '');
+                    // Placeholders with Hebrew legacy placeholder fallbacks
+                    main = replaceBoth(main, 'GuestName', guestName || '');
+                    main = replaceBoth(main, 'GuestTopic', guestTopic || '');
+                    main = replaceBoth(main, 'Biography', biography || '');
+                    main = main.replace(/\{שם המתארח\}/g, guestName || '');
+                    main = main.replace(/\{עיסוק\/תחום עניין\}/g, guestTopic || '');
+                    main = main.replace(/\{ביוגרפיה\}/g, biography || '');
 
                 // Outputs
                 setBBcode(main);
@@ -260,7 +263,7 @@ function EruhimGenerator() {
             questionCounter = 0;
             if (deptConfig.qabbcodeTemp) {
                 try {
-                    const qaBbcodeTemplateResponse = await fetch(deptConfig.qaBbcodeTemplate);
+                    const qaBbcodeTemplateResponse = await fetch(deptConfig.qabbcodeTemp);
                     if (!qaBbcodeTemplateResponse.ok) throw new Error('קובץ תבנית QA ל-BBCODE לא נמצא');
                     const qaBbcodeTemplateText = await qaBbcodeTemplateResponse.text();
                     qnaBbcodeBlock = blocks.map(block => {
