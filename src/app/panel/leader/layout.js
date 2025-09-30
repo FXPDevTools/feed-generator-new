@@ -1,7 +1,8 @@
-"use client";
-import usePanelAuth from "../hooks/usePanelAuth";
+export const metadata = {
+  title: "לוח בקרה – ראש צוות פיד",
+  description: "לוח הבקרה לראש צוות פיד",
+};
 
 export default function LeaderLayout({ children }) {
-  usePanelAuth({ allowedPanels: ["leader", "admin"] });
-  return <>{children}</>;
+  return <AuthWrapper allowedPanels={["leader", "admin"]}>{children}</AuthWrapper>;
 }

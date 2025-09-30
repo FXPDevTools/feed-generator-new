@@ -1,7 +1,8 @@
-"use client";
-import usePanelAuth from "../hooks/usePanelAuth";
+export const metadata = {
+  title: "לוח בקרה – עריכת הרשאות לפאנל",
+  description: "לוח הבקרה לעריכת הרשאות לפאנל",
+};
 
 export default function AccessLayout({ children }) {
-  usePanelAuth({ allowedPanels: ["leader", "admin"] });
-  return <>{children}</>;
+  return <AuthWrapper allowedPanels={["leader", "admin"]}>{children}</AuthWrapper>;
 }

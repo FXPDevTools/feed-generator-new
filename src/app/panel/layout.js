@@ -1,13 +1,11 @@
-"use client";
-
 import AuthGate from "./auth/AuthGate";
-import { usePathname } from "next/navigation";
+
+export const metadata = {
+  title: "לוח בקרה – מחולל צוות פיד",
+  description: "לוח הבקרה לניהול מחולל צוות פיד",
+};
 
 export default function PanelLayoutWrapper({ children }) {
-  if (usePathname() == "/panel/login") {
-    return <>{children}</>;
-  }
-
   return (
     <AuthGate>
       {children}

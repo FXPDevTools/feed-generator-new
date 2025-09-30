@@ -1,7 +1,14 @@
-"use client";
-import usePanelAuth from "../hooks/usePanelAuth";
+import AuthWrapper from '../hooks/AuthWrapper';
+
+export const metadata = {
+  title: "לוח בקרה – מערך האירוחים בצוות פיד",
+  description: "לוח הבקרה לניהול מחולל צוות פיד",
+};
 
 export default function EruhimLayout({ children }) {
-  usePanelAuth({ allowedPanels: ["eruhim"] });
-  return <>{children}</>;
+  return (
+    <AuthWrapper allowedPanels={["eruhim"]}>
+      {children}
+    </AuthWrapper>
+  );
 }
