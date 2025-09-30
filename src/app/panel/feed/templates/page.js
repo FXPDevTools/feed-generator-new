@@ -212,17 +212,24 @@ export default function TemplatesManagerPage() {
                       <div className="font-semibold text-lg md:text-xl">{t.name}</div>
                       <div className="text-xs text-gray-400">{t.is_active ? "🟢 פעילה" : "⚪ לא פעילה"}</div>
                     </button>
+                    <PanelButton 
+                      className="bg-blue-600 hover:bg-blue-700 w-auto" 
+                      onClick={() => window.open(`/feed?template=${t.id}`, '_blank')}
+                      title="פתח מחולל עם התבנית הזו"
+                    >
+                      📝 מחולל
+                    </PanelButton>
                     {!t.is_active && (
                       <PanelButton className="bg-yellow-600 hover:bg-yellow-700 w-auto" onClick={() => onSetActive(t.id)}>
                         הגדר פעילה
                       </PanelButton>
                     )}
                     {!t.is_active ? (
-                      <PanelButton className="bg-red-600 hover:bg-red-700 w-[200px]" onClick={() => onDelete(t.id)}>
+                      <PanelButton className="bg-red-600 hover:bg-red-700 w-auto" onClick={() => onDelete(t.id)}>
                         מחק
                       </PanelButton>
                     ) : (
-                      <PanelButton className="bg-gray-500 cursor-not-allowed w-[200px]" disabled title="לא ניתן למחוק את התבנית הפעילה!">
+                      <PanelButton className="bg-gray-500 cursor-not-allowed w-auto" disabled title="לא ניתן למחוק את התבנית הפעילה!">
                         לא ניתן למחוק
                       </PanelButton>
                     )}
