@@ -3,10 +3,10 @@ import { useState, useEffect, useRef, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import depts from 'public/dept-config.json';
 import BackButtons from "../BackButtons";
-import { 
-  simulateTemplateForPreview, 
-  GLOBAL_PLACEHOLDERS, 
-  GLOBAL_IF_BLOCKS 
+import {
+    simulateTemplateForPreview,
+    GLOBAL_PLACEHOLDERS,
+    GLOBAL_IF_BLOCKS
 } from '../../../lib/bbcode-preview.js';
 
 // Helper function to process the media link
@@ -103,7 +103,7 @@ function ArticleGeneratorComponent() {
     const loadTemplate = useCallback(async () => {
         try {
             let templateData = null;
-            
+
             if (templateId) {
                 // Try to load specific template by ID
                 const response = await fetch(`/api/bbcode/templates/${templateId}`);
@@ -120,7 +120,7 @@ function ArticleGeneratorComponent() {
                     templateData = await response.json();
                 }
             }
-            
+
             if (templateData && templateData.content) {
                 setCurrentTemplate(templateData);
                 setTemplateError('');
@@ -205,7 +205,7 @@ function ArticleGeneratorComponent() {
                     const d = await r.json();
                     errorUserId = d?.id || '';
                 }
-            } catch {}
+            } catch { }
 
             const templateData = {
                 ArticleTitle: title || 'כותרת',
@@ -348,7 +348,7 @@ function ArticleGeneratorComponent() {
             <div className="z-10 w-full max-w-7xl items-center justify-between font-mono text-sm lg:flex flex-col">
                 <BackButtons />
                 <h1 className="text-4xl font-bold mb-4">מחולל כתבות</h1>
-                
+
                 {/* Template Status */}
                 {currentTemplate ? (
                     <div className="mb-4 p-3 bg-blue-900 rounded-lg">
@@ -366,7 +366,7 @@ function ArticleGeneratorComponent() {
                         <p className="text-sm text-gray-300">📁 משתמש במערכת התבניות הישנה</p>
                     </div>
                 )}
-                
+
                 <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Input Section */}
                     <div className="bg-gray-800 p-6 rounded-lg space-y-4 w-full max-w-6xl mx-auto overflow-x-auto">
@@ -392,7 +392,7 @@ function ArticleGeneratorComponent() {
                         <div className="mb-4">
                             <div className="flex items-center justify-between mb-2">
                                 <label className="block text-lg font-semibold">אשכולות רלוונטיים</label>
-                                <button type="button" className="bg-blue-600 text-white px-4 py-2 rounded" style={{minWidth:'180px'}}>חפש אשכולות בפורום הרלוונטי</button>
+                                <button type="button" className="bg-blue-600 text-white px-4 py-2 rounded" style={{ minWidth: '180px' }}>חפש אשכולות בפורום הרלוונטי</button>
                             </div>
                             {threads.map((thread, idx) => (
                                 <div key={idx} className="flex gap-2 mb-2">
@@ -400,14 +400,14 @@ function ArticleGeneratorComponent() {
                                         type="text"
                                         value={thread.title}
                                         onChange={e => handleThreadChange(idx, 'title', e.target.value)}
-                                        placeholder={`כותרת אשכול ${idx+1}`}
+                                        placeholder={`כותרת אשכול ${idx + 1}`}
                                         className="w-1/2 p-2 bg-gray-700 rounded"
                                     />
                                     <input
                                         type="text"
                                         value={thread.link}
                                         onChange={e => handleThreadChange(idx, 'link', e.target.value)}
-                                        placeholder={`קישור אשכול ${idx+1}`}
+                                        placeholder={`קישור אשכול ${idx + 1}`}
                                         className="w-1/2 p-2 bg-gray-700 rounded"
                                     />
                                 </div>
@@ -418,7 +418,7 @@ function ArticleGeneratorComponent() {
                     <div className="bg-gray-800 p-6 rounded-lg space-y-4">
                         <div>
                             <h2 className="text-2xl font-semibold mb-2">תצוגה מקדימה (HTML)</h2>
-                            <div className="w-full bg-white text-black p-4 rounded-lg overflow-y-auto" style={{boxSizing: 'border-box', width: '100%', height: 'auto'}} dangerouslySetInnerHTML={{ __html: previewContent }}></div>
+                            <div className="w-full bg-white text-black p-4 rounded-lg overflow-y-auto" style={{ boxSizing: 'border-box', width: '100%', height: 'auto' }} dangerouslySetInnerHTML={{ __html: previewContent }}></div>
                         </div>
                         <div>
                             <h2 className="text-2xl font-semibold mb-2">Generated BBCODE</h2>

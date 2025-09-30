@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import BackButtons from '../BackButtons';
 
+import {metadata} from './layout';
+
 export default function EruhimHome() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center p-8 bg-transparent text-white">
