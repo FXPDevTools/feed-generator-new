@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import depts from "public/dept-config.json";
-import BackButtons from "../../BackButtons";
+import BackButtons from "../../components/BackButtons";
 
 // קומפוננטת עורך BBCode
 const BbCodeEditor = ({ content, setContent }) => {

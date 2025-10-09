@@ -2,12 +2,8 @@
 import { useState, useEffect, useRef, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import depts from 'public/dept-config.json';
-import BackButtons from "../BackButtons";
-import {
-    simulateTemplateForPreview,
-    GLOBAL_PLACEHOLDERS,
-    GLOBAL_IF_BLOCKS
-} from '../../../lib/bbcode-preview.js';
+import BackButtons from "../components/BackButtons";
+import { simulateTemplateForPreview } from '../../../lib/bbcode-preview';
 
 // Helper function to process the media link
 // פונקציה לעיבוד בלוקים מותנים בתבנית BBCODE

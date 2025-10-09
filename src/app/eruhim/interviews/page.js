@@ -5,7 +5,7 @@ import depts from "public/dept-config.json";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import BackButtons from "../../BackButtons";
+import BackButtons from "../../components/BackButtons";
 import { bbcodeToHtml } from "../../../../lib/interview-preview.js";
 
 // --- קומפוננטת עורך BBCode (ללא שינוי) ---
@@ -216,13 +216,13 @@ function EruhimGenerator() {
                 });
                 // Insert Q&A block
                 main = main.replace(/\{QNA_BLOCK\}/g, qnaBbcodeBlock);
-                    // Placeholders with Hebrew legacy placeholder fallbacks
-                    main = replaceBoth(main, 'GuestName', guestName || '');
-                    main = replaceBoth(main, 'GuestTopic', guestTopic || '');
-                    main = replaceBoth(main, 'Biography', biography || '');
-                    main = main.replace(/\{שם המתארח\}/g, guestName || '');
-                    main = main.replace(/\{עיסוק\/תחום עניין\}/g, guestTopic || '');
-                    main = main.replace(/\{ביוגרפיה\}/g, biography || '');
+                // Placeholders with Hebrew legacy placeholder fallbacks
+                main = replaceBoth(main, 'GuestName', guestName || '');
+                main = replaceBoth(main, 'GuestTopic', guestTopic || '');
+                main = replaceBoth(main, 'Biography', biography || '');
+                main = main.replace(/\{שם המתארח\}/g, guestName || '');
+                main = main.replace(/\{עיסוק\/תחום עניין\}/g, guestTopic || '');
+                main = main.replace(/\{ביוגרפיה\}/g, biography || '');
 
                 // Outputs
                 setBBcode(main);
@@ -322,7 +322,7 @@ function EruhimGenerator() {
 
         generateOutputs();
     }, [guestName, guestTopic, biography, blocks, currentTemplate]);
-    
+
     const handleBlockChange = (id, field, value) => {
         setBlocks(blocks.map(block => block.id === id ? { ...block, [field]: value } : block));
     };
@@ -423,16 +423,16 @@ function EruhimGenerator() {
                     <div className="bg-gray-800 p-6 rounded-lg space-y-4">
                         <div><h2 className="text-2xl font-semibold mb-2">תצוגה מקדימה (HTML)</h2><div className="w-full bg-white text-black p-4 rounded-lg h-80 overflow-y-auto" dangerouslySetInnerHTML={{ __html: previewContent }}></div></div>
                         <div><h2 className="text-2xl font-semibold mb-2">Generated BBCODE</h2>
-                          <textarea readOnly value={generatedBBcode} className="w-full p-2 bg-gray-700 rounded h-32 mb-2" />
-                          <div className="flex gap-4">
-                            <button onClick={() => copyToClipboard(generatedBBcode)} className="w-full bg-purple-600 px-4 py-2 rounded">העתק קוד BBCODE</button>
-                            <button
-                              className="w-full bg-green-700 hover:bg-green-800 text-white font-bold px-4 py-2 rounded"
-                              onClick={() => window.open('https://www.fxp.co.il/forumdisplay.php?f=10577', '_blank')}
-                            >
-                              פתח חדר עבודה
-                            </button>
-                          </div>
+                            <textarea readOnly value={generatedBBcode} className="w-full p-2 bg-gray-700 rounded h-32 mb-2" />
+                            <div className="flex gap-4">
+                                <button onClick={() => copyToClipboard(generatedBBcode)} className="w-full bg-purple-600 px-4 py-2 rounded">העתק קוד BBCODE</button>
+                                <button
+                                    className="w-full bg-green-700 hover:bg-green-800 text-white font-bold px-4 py-2 rounded"
+                                    onClick={() => window.open('https://www.fxp.co.il/forumdisplay.php?f=10577', '_blank')}
+                                >
+                                    פתח חדר עבודה
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

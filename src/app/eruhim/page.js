@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import BackButtons from '../BackButtons';
+import BackButtons from '../components/BackButtons';
 
 export default function EruhimHome() {
   return (
