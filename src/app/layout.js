@@ -1,0 +1,40 @@
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import "public/MainStyle.css";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata = {
+  title: "מחולל צוות פיד",
+  description: "ברוכים הבאים למחולל החדש של צוות פיד!",
+  icons: {
+    icon: "https://i.imagesup.co/images2/975accc8c23cb6943f3c828996d66e2a5fb0e09c.png",
+  },
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="he" dir="rtl">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+      >
+        <Header />
+        <div className="flex-1 w-full flex flex-col">
+          {children}
+        </div>
+        <Footer />
+      </body>
+    </html>
+  );
+}

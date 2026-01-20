@@ -1,0 +1,52 @@
+<!-- תבנית HTML חדשה המבוססת על עיצוב ה-BBCODE הנוכחי -->
+<div style="direction: rtl; font-family: tahoma; text-align: center;">
+  <style>
+    .centered-img { display: block; margin-left: auto; margin-right: auto; }
+    .centered-block { text-align: center; margin: 0 auto; }
+  </style>
+  <img src="https://i.imagesup.co/images2/eddea84774e219fda9bb475211dcbdd6fabbb79f.png" alt="" class="centered-img" style="margin-bottom: 1em;" />
+  <img src="https://i.imagesup.co/images2/ceb0a248f7a02c4c3acd0da5857f18930b16afb3.png" alt="" class="centered-img" />
+  <div style="color: #3366cc; text-decoration: underline; font-weight: bold; font-size: 2em;">
+  %ArticleTitle%
+  </div>
+  <div class="centered-block">%ImageLink%</div>
+  <div style="font-size: 1.2em; margin: 1em 0;">%Content%</div>
+  <div style="margin: 1em 0; color: #a9a9a9; font-size: 0.9em;">
+    <strong>%RelevantLinkDesc%</strong><br />
+    <a href="%RelevantLink%" style="color: #a9a9a9; text-decoration: underline;">%RelevantLink%</a>
+  </div>
+  <div style="font-size: 0.9em; color: #a9a9a9; margin-bottom: 1em;">
+    <a href="%Source%" style="color: #a9a9a9;">מקור</a>
+  </div>
+  %IF_FORUM_OR_LINKS_START%
+  <img src="https://i.imagesup.co/images2/ceb0a248f7a02c4c3acd0da5857f18930b16afb3.png" alt="" class="centered-img" />
+  %IF_FORUM_OR_LINKS_END%
+  %IF_FORUM_START%
+  <div style="color: #3366cc; font-weight: bold; margin: 1em 0;">
+    יש לכם שאלות? רוצים לדעת עוד? היכנסו לפורום<br />
+    <a href="https://www.fxp.co.il/forumdisplay.php?f=%ForumID%" style="color: #3366cc; font-size: 1.2em; font-weight: bold;"><span style="font-weight: bold; font-size: 1.1em;">%ForumName%</span></a>
+  </div>
+  %IF_FORUM_END%
+  %IF_ADDITIONAL_LINKS_START%
+  <div style="color: #3366cc; font-size: 1.2em; font-weight: bold;">אולי יעניין אותך גם:</div>
+  <div>
+    <a href="%AdditionalLink1%" style="color: #3366cc; font-weight: bold;">%AdditionalTitle1%</a><br />
+    <a href="%AdditionalLink2%" style="color: #3366cc; font-weight: bold;">%AdditionalTitle2%</a><br />
+    <a href="%AdditionalLink3%" style="color: #3366cc; font-weight: bold;">%AdditionalTitle3%</a><br />
+    <a href="%AdditionalLink4%" style="color: #3366cc; font-weight: bold;">%AdditionalTitle4%</a><br />
+    <a href="%AdditionalLink5%" style="color: #3366cc; font-weight: bold;">%AdditionalTitle5%</a>
+  </div>
+  %IF_ADDITIONAL_LINKS_END%
+  <img src="https://i.imagesup.co/images2/ceb0a248f7a02c4c3acd0da5857f18930b16afb3.png" alt="" class="centered-img" />
+  <div style="font-size: 1em; font-weight: bold; margin: 1em 0;">
+    <a href="https://www.fxp.co.il/private.php?do=newpm&u=1030355" style="color: #000; text-decoration: underline;">מצאתם טעות בכתבה? ספרו לנו ונתקן בהקדם</a>
+  </div>
+  <table style="width: 250px; margin: 1em auto; text-align: center;">
+    <tr></tr>
+    <tr>
+  <td style="font-family: tahoma; color: #3366cc; font-size: 1.2em; font-weight: bold; text-align: center;">בברכה,<br />צוות פיד</td>
+  <td><img src="https://i.imagesup.co/images2/4cdebefa76fa20b1c423de4485b8f53169d756e0.png" alt="" class="centered-img" /></td>
+    </tr>
+    <tr></tr>
+  </table>
+</div>

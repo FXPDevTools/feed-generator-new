@@ -1,0 +1,8 @@
+[TABLE="class: cms_table_cms_table_cms_table_cms_table_cms_table_cms_table, width: 900, align: center"]
+[TR="bgcolor: #999900"]
+[TD="align: center"]%Question%[/TD]
+[/TR]
+[TR]
+[TD="align: center"]%Answer%[/TD]
+[/TR]
+[/TABLE]

@@ -1,0 +1,11 @@
+<div class="qna-card" style="direction: rtl; font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    
+    <div class="question-header" style="background-color: #999900; color: white; padding: 12px 15px; font-size: 1.1em; font-weight: bold;">
+        %Question%
+    </div>
+
+    <div class="answer-body" style="background-color: #f7f7f7; padding: 15px; color: #333; font-size: 1em; line-height: 1.6;">
+        %Answer%
+    </div>
+
+</div>
