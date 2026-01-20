@@ -39,12 +39,27 @@ export default function ManageCodes() {
     setNewPanels(prev => prev.includes(panel) ? prev.filter(p => p !== panel) : [...prev, panel]);
   };
 
-  const handleAddCode = () => {
+  const handleAddCode = async () => {
     if (!newCode || !newRole || newPanels.length === 0) return;
-    setCodes([...codes, { code: newCode, role: newRole, panels: newPanels }]);
-    setNewCode('');
-    setNewRole('');
-    setNewPanels([]);
+    const updatedCodes = [...codes, { code: newCode, role: newRole, panels: newPanels }];
+    setCodes(updatedCodes);
+
+    // Auto-save immediately to prevent confusion
+    const res = await authenticatedFetch('/api/panel/access/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedCodes)
+    });
+
+    if (res.ok) {
+      setOriginalCodes(updatedCodes);
+      setNewCode('');
+      setNewRole('');
+      setNewPanels([]);
+      alert('משתמש נוסף בהצלחה!');
+    } else {
+      alert('שגיאה בשמירה: ' + (await res.text()));
+    }
   };
 
   const handleDeleteCode = (code) => {
