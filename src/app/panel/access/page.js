@@ -76,7 +76,7 @@ export default function ManageCodes() {
 
   return (
     <PanelFrame title="ניהול קודי גישה" role={role}>
-      {role === 'אדמין' && (
+      {(role === 'אדמין' || role === 'admin') && (
         <div className="w-full mb-8 bg-gray-800 p-4 rounded-lg border border-gray-700">
           <h2 className="text-xl mb-4">הוספת קוד חדש</h2>
           <div className="space-y-3">
