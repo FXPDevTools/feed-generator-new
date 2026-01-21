@@ -178,6 +178,19 @@ function ArticleGeneratorComponent() {
     const handleAddHyperlink = () => { const url = prompt("הכנס קישור:"); if (url) applyBbCode('URL', url); };
     const handleRemoveHyperlink = () => removeBbCode('URL');
 
+    // --- Search Threads Handler ---
+    const handleSearchThreads = () => {
+        if (forumName === 'בחירת פורום') {
+            alert('יש לבחור פורום קודם!');
+            return;
+        }
+        // Open FXP forum search in new tab
+        const searchQuery = encodeURIComponent(title || 'חדשות');
+        const forumSearchUrl = `https://www.fxp.co.il/search.php?do=process&query=${searchQuery}&titleonly=1&searchuser=&starteronly=0&exactname=1&replyless=0&replylimit=0&searchdate=0&beforeafter=after&sortby=lastpost&order=descending&showposts=0&saveprefs=1&prefixchoice%5B%5D=0&childforums=1&quicksearch=1`;
+        window.open(forumSearchUrl, '_blank');
+        alert('נפתח חלון חיפוש באתר FXP.\nהעתק את הקישורים והכותרות של האשכולות הרלוונטיים.');
+    };
+
     // --- Main Generation Logic for both HTML and BBCode ---
     useEffect(() => {
         const deptConfig = depts.feed;
@@ -559,7 +572,7 @@ function ArticleGeneratorComponent() {
                                             <p className="text-xs text-slate-400">5 קישורים לאשכולות קשורים</p>
                                         </div>
                                     </div>
-                                    <button type="button" className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-sm font-semibold transition-all btn-lift glow-indigo">
+                                    <button type="button" onClick={handleSearchThreads} className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-sm font-semibold transition-all btn-lift glow-indigo">
                                         🔍 חפש אשכולות
                                     </button>
                                 </div>

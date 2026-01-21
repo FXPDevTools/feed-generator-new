@@ -168,6 +168,20 @@ body {
   border-color: #6366f1 !important;
 }
 
+/* Fix input text visibility */
+input,
+textarea,
+select {
+  color: #f1f5f9 !important;
+  caret-color: #f1f5f9;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #64748b !important;
+  opacity: 1;
+}
+
 /* Button hover lift */
 .btn-lift {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

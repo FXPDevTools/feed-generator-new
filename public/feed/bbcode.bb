@@ -31,12 +31,11 @@
 [B][SIZE=2][U][URL="https://www.fxp.co.il/private.php?do=newpm&u=1030355"][COLOR=#000000]מצאתם טעות בכתבה? ספרו לנו ונתקן בהקדם[/COLOR][/URL][/U][/SIZE][/B]
 [TABLE="width: 250, align: center"]
 [TR]
-[TR]
 [TD][FONT=tahoma][B][COLOR=#3366cc][SIZE=3]בברכה,
 צוות פיד[/SIZE][/COLOR][/B][/FONT][/TD]
-[TD][FONT=tahoma][IMG]https://i.imagesup.co/images2/4cdebefa76fa20b1c423de4485b8f53169d756e0.png[/IMG][/FONT][/TD]
 [/TR]
 [TR]
+[TD][FONT=tahoma][IMG]https://i.imagesup.co/images2/4cdebefa76fa20b1c423de4485b8f53169d756e0.png[/IMG][/FONT][/TD]
 [/TR]
 [/TABLE]
 [/FONT]
