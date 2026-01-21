@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import depts from 'public/dept-config.json';
+import forumCategories from 'public/forum-categories.json';
 import BackButtons from "../components/BackButtons";
 import { simulateTemplateForPreview, bbcodeToHtml } from '../../../lib/bbcode-preview';
 
@@ -87,7 +88,7 @@ function ArticleGeneratorComponent() {
     const [relevantLinkDesc, setRelevantLinkDesc] = useState(''); // %RelevantLinkDesc%
     const [relevantLink, setRelevantLink] = useState(''); // %RelevantLink%
     const [source, setSource] = useState(''); // %Source%
-    const [forumName, setForumName] = useState('בחירת פורום'); // default option
+    const [forumName, setForumName] = useState(''); // format: "id|name" or empty
     // --- States for generated outputs, preview, and editor ---
     const [generatedHtml, setGeneratedHtml] = useState('');
     const [generatedBBcode, setBBcode] = useState(''); // Your new state for BBCode
@@ -180,13 +181,15 @@ function ArticleGeneratorComponent() {
 
     // --- Search Threads Handler ---
     const handleSearchThreads = () => {
-        if (forumName === 'בחירת פורום') {
+        if (!forumName) {
             alert('יש לבחור פורום קודם!');
             return;
         }
+        // Parse forum ID from the value (format: "id|name")
+        const [forumId] = forumName.split('|');
         // Open FXP forum search in new tab
         const searchQuery = encodeURIComponent(title || 'חדשות');
-        const forumSearchUrl = `https://www.fxp.co.il/search.php?do=process&query=${searchQuery}&titleonly=1&searchuser=&starteronly=0&exactname=1&replyless=0&replylimit=0&searchdate=0&beforeafter=after&sortby=lastpost&order=descending&showposts=0&saveprefs=1&prefixchoice%5B%5D=0&childforums=1&quicksearch=1`;
+        const forumSearchUrl = `https://www.fxp.co.il/search.php?do=process&query=${searchQuery}&titleonly=1&searchuser=&starteronly=0&exactname=1&replyless=0&replylimit=0&searchdate=0&beforeafter=after&sortby=lastpost&order=descending&showposts=0&saveprefs=1&prefixchoice%5B%5D=0&forumchoice[]=${forumId}&childforums=1&quicksearch=1`;
         window.open(forumSearchUrl, '_blank');
         alert('נפתח חלון חיפוש באתר FXP.\nהעתק את הקישורים והכותרות של האשכולות הרלוונטיים.');
     };
@@ -550,10 +553,16 @@ function ArticleGeneratorComponent() {
                                     </label>
                                     <div className="relative">
                                         <select value={forumName} onChange={(e) => setForumName(e.target.value)} className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none appearance-none cursor-pointer input-glow">
-                                            <option>בחירת פורום</option>
-                                            <option>פורום 1</option>
-                                            <option>פורום 2</option>
-                                            <option>פורום 3</option>
+                                            <option value="">בחירת פורום</option>
+                                            {forumCategories.map((category) => (
+                                                <optgroup key={category.category} label={`── ${category.category} ──`}>
+                                                    {category.forums.map((forum) => (
+                                                        <option key={forum.id} value={`${forum.id}|${forum.name}`}>
+                                                            {forum.name}
+                                                        </option>
+                                                    ))}
+                                                </optgroup>
+                                            ))}
                                         </select>
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">▼</div>
                                     </div>
