@@ -205,7 +205,10 @@ function ArticleGeneratorComponent() {
             // --- Additional Links Logic ---
             // Block appears only if ALL 5 links AND ALL 5 titles are filled
             const additionalLinksFilled = threads.every(thread => thread.title.trim() && thread.link.trim());
-            const forumFilled = forumName !== 'בחירת פורום';
+
+            // Parse forum value (format: "id|name" or empty)
+            const forumFilled = !!forumName;
+            const [parsedForumId, parsedForumName] = forumName ? forumName.split('|') : ['', ''];
             const forumOrLinksFilled = forumFilled || additionalLinksFilled;
 
             // Prepare data object for template processing
@@ -226,8 +229,8 @@ function ArticleGeneratorComponent() {
                 RelevantLinkDesc: relevantLinkDesc || '',
                 RelevantLink: relevantLink || '',
                 Source: source || '',
-                ForumName: forumFilled ? forumName : '',
-                ForumID: forumFilled ? '123' : '', // Default forum ID
+                ForumName: forumFilled ? parsedForumName : '',
+                ForumID: forumFilled ? parsedForumId : '',
                 ErrorUserID: errorUserId,
                 AdditionalLink1: threads[0]?.link || '',
                 AdditionalTitle1: threads[0]?.title || '',
@@ -282,7 +285,8 @@ function ArticleGeneratorComponent() {
                     bbcodeTemplate = bbcodeTemplate.replace(/%Source%/g, source);
                     // Dynamic error user id placeholder for legacy BBCode fallback
                     bbcodeTemplate = bbcodeTemplate.replace(/%ErrorUserID%/g, errorUserId || '');
-                    bbcodeTemplate = bbcodeTemplate.replace(/%ForumName%/g, forumName);
+                    bbcodeTemplate = bbcodeTemplate.replace(/%ForumName%/g, parsedForumName);
+                    bbcodeTemplate = bbcodeTemplate.replace(/%ForumID%/g, parsedForumId);
                     bbcodeTemplate = bbcodeTemplate.replace(/%AdditionalLink1%/g, threads[0].link);
                     bbcodeTemplate = bbcodeTemplate.replace(/%AdditionalTitle1%/g, threads[0].title);
                     bbcodeTemplate = bbcodeTemplate.replace(/%AdditionalLink2%/g, threads[1].link);
