@@ -296,10 +296,10 @@ function ArticleGeneratorComponent() {
                 htmlTemplate = htmlTemplate.replace(/%deptColor%/g, deptConfig.deptColor);
                 // Default title/content if empty
                 htmlTemplate = htmlTemplate.replace(/%ArticleTitle%/g, title || 'כותרת');
-                
+
                 // FIXED: Use bbcodeToHtml instead of simple replace
                 htmlTemplate = htmlTemplate.replace(/%Content%/g, content ? bbcodeToHtml(content) : 'תוכן');
-                
+
                 // Hide other tags if empty
                 htmlTemplate = htmlTemplate.replace(/%ImageLink%/g, imageLink ? media.html : '');
                 htmlTemplate = htmlTemplate.replace(/%RelevantLinkDesc%/g, relevantLinkDesc ? relevantLinkDesc : '');
@@ -343,197 +343,304 @@ function ArticleGeneratorComponent() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center p-6 bg-slate-950 text-slate-100 font-sans">
-            <div className="z-10 w-full max-w-7xl items-center justify-between font-mono text-sm lg:flex flex-col gap-6">
-                <BackButtons />
-                <h1 className="text-4xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">מחולל כתבות</h1>
+        <main className="min-h-screen p-4 md:p-8 noise-overlay">
+            {/* Decorative background elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-20 right-10 w-72 h-72 bg-indigo-600/20 rounded-full blur-3xl float-animation"></div>
+                <div className="absolute bottom-40 left-20 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl float-animation" style={{ animationDelay: '4s' }}></div>
+            </div>
 
-                {/* Template Status */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto">
+                <BackButtons />
+
+                {/* Hero Header */}
+                <div className="text-center mb-10 mt-4">
+                    <div className="inline-block mb-4">
+                        <div className="flex items-center justify-center gap-3 mb-2">
+                            <div className="w-12 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full"></div>
+                            <span className="text-sm font-medium text-indigo-400 tracking-widest uppercase">Feed Generator</span>
+                            <div className="w-12 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full"></div>
+                        </div>
+                    </div>
+                    <h1 className="text-5xl md:text-6xl font-black text-gradient mb-3">מחולל כתבות</h1>
+                    <p className="text-slate-400 text-lg">צור תוכן מעוצב בקלות ומהירות</p>
+                </div>
+
+                {/* Template Status - Glassmorphism */}
                 {currentTemplate ? (
-                    <div className="w-full mb-4 p-4 bg-indigo-900/40 border border-indigo-700/50 rounded-xl flex items-center gap-3 shadow-lg backdrop-blur-sm">
-                         <div className="p-2 bg-indigo-600/20 rounded-lg">🎯</div>
-                         <div>
-                            <p className="font-semibold text-indigo-200">תבנית פעילה: {currentTemplate.name}</p>
-                            <p className="text-xs text-indigo-300 opacity-80">{templateId ? `ID: ${templateId}` : 'מוגדרת כברירת מחדל'}</p>
+                    <div className="glass-card glow-indigo rounded-2xl p-5 mb-8 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl shadow-lg">
+                            🎯
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-bold text-lg text-white">תבנית פעילה: {currentTemplate.name}</p>
+                            <p className="text-sm text-indigo-300/80">{templateId ? `מזהה: ${templateId}` : 'מוגדרת כברירת מחדל'}</p>
+                        </div>
+                        <div className="px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-xs text-indigo-300 font-medium">
+                            מופעל
                         </div>
                     </div>
                 ) : templateError ? (
-                    <div className="w-full mb-4 p-4 bg-red-900/40 border border-red-700/50 rounded-xl flex items-center gap-3 shadow-lg">
-                        <div className="p-2 bg-red-600/20 rounded-lg">❌</div>
-                        <p className="text-red-200 font-medium">{templateError} - משתמש במערכת הישנה</p>
+                    <div className="glass-card rounded-2xl p-5 mb-8 flex items-center gap-4 border-red-500/30">
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-2xl shadow-lg">
+                            ⚠️
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-bold text-lg text-white">{templateError}</p>
+                            <p className="text-sm text-red-300/80">נעשה שימוש במערכת הישנה</p>
+                        </div>
                     </div>
                 ) : (
-                    <div className="w-full mb-4 p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl flex items-center gap-3 shadow-lg">
-                        <div className="p-2 bg-slate-600/20 rounded-lg">📁</div>
-                        <p className="text-slate-300">מערכת תבניות ישנה</p>
+                    <div className="glass-card rounded-2xl p-5 mb-8 flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-2xl shadow-lg">
+                            📁
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-bold text-lg text-white">מערכת תבניות קלאסית</p>
+                            <p className="text-sm text-slate-400">ללא תבנית מותאמת אישית</p>
+                        </div>
                     </div>
                 )}
 
-                <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
-                    {/* Input Section */}
-                    <div className="bg-slate-900/60 p-8 rounded-2xl border border-slate-800 shadow-xl space-y-6">
-                        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
-                             <div className="w-2 h-8 bg-indigo-500 rounded-full"></div>
-                             <h2 className="text-2xl font-bold text-slate-100">עריכת תוכן</h2>
-                        </div>
-                    
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-1.5">כותרת הכתבה</label>
-                                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full p-3 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg transition-all outline-none" placeholder="הכנס כותרת ראשית..." />
-                            </div>
-                            
-                            <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-1.5">קישור למדיה (תמונה או סרטון YouTube)</label>
-                                <div className="relative">
-                                    <input type="text" value={imageLink} onChange={(e) => setImageLink(e.target.value)} placeholder="https://example.com/image.png" className="w-full p-3 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg transition-all outline-none pl-10" />
-                                     <div className="absolute left-3 top-3.5 text-slate-500">🖼️</div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-2">תוכן הכתבה</label>
-                                {/* Toolbar */}
-                                <div className="flex flex-wrap items-center gap-2 mb-3 p-2 bg-slate-800 rounded-lg border border-slate-700">
-                                    <button onClick={() => applyBbCode('B')} className="w-9 h-9 flex items-center justify-center font-bold bg-slate-700 hover:bg-slate-600 rounded-md transition-colors text-slate-200" title="מודגש">B</button>
-                                    <button onClick={() => applyBbCode('U')} className="w-9 h-9 flex items-center justify-center underline bg-slate-700 hover:bg-slate-600 rounded-md transition-colors text-slate-200" title="קו תחתון">U</button>
-                                    <button onClick={() => applyBbCode('I')} className="w-9 h-9 flex items-center justify-center italic bg-slate-700 hover:bg-slate-600 rounded-md transition-colors text-slate-200" title="נטוי">I</button>
-                                    
-                                    <div className="w-px h-6 bg-slate-600 mx-1"></div>
-                                    
-                                    <div className="flex items-center gap-1 bg-slate-700 p-1 rounded-md">
-                                        <input type="color" value={editorColor} onChange={(e) => setEditorColor(e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent" />
-                                        <button onClick={handleColorChange} className="text-xs font-medium px-2 py-1 hover:text-white transition-colors">צבע</button>
-                                    </div>
-                                    
-                                    <div className="flex items-center gap-1 bg-slate-700 p-1 rounded-md">
-                                        <input type="number" min="1" max="7" value={editorSize} onChange={(e) => setEditorSize(e.target.value)} className="w-8 bg-transparent text-center text-sm outline-none" />
-                                        <button onClick={handleSizeChange} className="text-xs font-medium px-2 py-1 hover:text-white transition-colors">גודל</button>
-                                        <button onClick={handleResetSize} className="text-xs opacity-50 hover:opacity-100 px-1">✕</button>
-                                    </div>
-
-                                    <div className="w-px h-6 bg-slate-600 mx-1"></div>
-
-                                    <button onClick={handleSubtitle} className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-md text-xs font-medium transition-colors">כותרת</button>
-                                    <button onClick={handleSubtitleIn} className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-md text-xs font-medium transition-colors">תת-כותרת</button>
-                                    
-                                    <div className="w-px h-6 bg-slate-600 mx-1"></div>
-                                    
-                                    <button onClick={handleAddHyperlink} className="w-9 h-9 flex items-center justify-center bg-slate-700 hover:bg-slate-600 rounded-md text-lg transition-colors" title="הוסף קישור">🔗</button>
-                                </div>
-                                
-                                <textarea 
-                                    ref={contentRef} 
-                                    value={content} 
-                                    onChange={(e) => setContent(e.target.value)} 
-                                    className="w-full p-4 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg min-h-[300px] font-sans text-base leading-relaxed resize-y outline-none transition-all"
-                                    placeholder="כתוב את תוכן הכתבה כאן..."
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-400 mb-1.5">תיאור קישור רלוונטי</label>
-                                    <input type="text" value={relevantLinkDesc} onChange={(e) => setRelevantLinkDesc(e.target.value)} placeholder="לדוגמה: למעבר לכתבה" className="w-full p-3 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg outline-none" />
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+                    {/* Input Section - Left Card */}
+                    <div className="gradient-border">
+                        <div className="glass-card rounded-2xl p-8 relative overflow-hidden">
+                            {/* Card Header */}
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                                    <span className="text-xl">✏️</span>
                                 </div>
                                 <div>
-                                     <label className="block text-sm font-medium text-slate-400 mb-1.5">כתובת הקישור</label>
-                                    <input type="text" value={relevantLink} onChange={(e) => setRelevantLink(e.target.value)} placeholder="https://..." className="w-full p-3 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg outline-none" />
+                                    <h2 className="text-2xl font-bold text-white">עריכת תוכן</h2>
+                                    <p className="text-sm text-slate-400">הזן את פרטי הכתבה</p>
                                 </div>
                             </div>
-                            
-                             <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-1.5">מקור הכתבה</label>
-                                <div className="relative">
-                                    <input type="text" value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://source-example.com" className="w-full p-3 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg outline-none pl-10" />
-                                    <div className="absolute left-3 top-3.5 text-slate-500">🌐</div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-1.5">פורום רלוונטי</label>
-                                <div className="relative">
-                                    <select value={forumName} onChange={(e) => setForumName(e.target.value)} className="w-full p-3 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg outline-none appearance-none cursor-pointer">
-                                        <option>בחירת פורום</option>
-                                        <option>פורום 1</option>
-                                        <option>פורום 2</option>
-                                        <option>פורום 3</option>
-                                    </select>
-                                    <div className="absolute left-3 top-4 text-slate-500 pointer-events-none">▼</div>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* אשכולות רלוונטיים */}
-                        <div className="pt-6 border-t border-slate-800">
-                            <div className="flex items-center justify-between mb-4">
-                                <label className="block text-lg font-bold text-slate-200">אשכולות רלוונטיים</label>
-                                <button type="button" className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-900/20">
-                                    🔍 חפש אשכולות
-                                </button>
-                            </div>
-                            <div className="space-y-3">
-                                {threads.map((thread, idx) => (
-                                    <div key={idx} className="flex gap-3">
-                                        <div className="flex items-center justify-center w-8 h-10 bg-slate-800 rounded text-slate-500 font-mono text-xs">{idx + 1}</div>
+                            <div className="space-y-6">
+                                {/* Title Input */}
+                                <div className="group">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                        כותרת הכתבה
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        className="w-full p-4 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl transition-all outline-none input-glow text-lg placeholder:text-slate-600"
+                                        placeholder="הכנס כותרת ראשית..."
+                                    />
+                                </div>
+
+                                {/* Media Link Input */}
+                                <div className="group">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                                        קישור למדיה
+                                    </label>
+                                    <div className="relative">
                                         <input
                                             type="text"
-                                            value={thread.title}
-                                            onChange={e => handleThreadChange(idx, 'title', e.target.value)}
-                                            placeholder="כותרת האשכול"
-                                            className="w-1/2 p-2.5 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg outline-none text-sm"
+                                            value={imageLink}
+                                            onChange={(e) => setImageLink(e.target.value)}
+                                            placeholder="תמונה או סרטון YouTube"
+                                            className="w-full p-4 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl transition-all outline-none input-glow pl-14 placeholder:text-slate-600"
                                         />
-                                        <input
-                                            type="text"
-                                            value={thread.link}
-                                            onChange={e => handleThreadChange(idx, 'link', e.target.value)}
-                                            placeholder="קישור לאשכול"
-                                            className="w-1/2 p-2.5 bg-slate-800/50 border border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-lg outline-none text-sm text-left dir-ltr"
-                                            dir="ltr"
-                                        />
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-50">🖼️</div>
                                     </div>
-                                ))}
+                                </div>
+
+                                {/* Content Editor */}
+                                <div className="group">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                                        תוכן הכתבה
+                                    </label>
+
+                                    {/* Premium Toolbar */}
+                                    <div className="flex flex-wrap items-center gap-1.5 mb-3 p-3 bg-slate-900/80 rounded-xl border border-slate-700/50">
+                                        <div className="flex gap-1">
+                                            <button onClick={() => applyBbCode('B')} className="w-10 h-10 flex items-center justify-center font-black text-lg bg-slate-800 hover:bg-indigo-600 rounded-lg transition-all btn-lift" title="מודגש">B</button>
+                                            <button onClick={() => applyBbCode('U')} className="w-10 h-10 flex items-center justify-center underline bg-slate-800 hover:bg-indigo-600 rounded-lg transition-all btn-lift" title="קו תחתון">U</button>
+                                            <button onClick={() => applyBbCode('I')} className="w-10 h-10 flex items-center justify-center italic bg-slate-800 hover:bg-indigo-600 rounded-lg transition-all btn-lift" title="נטוי">I</button>
+                                        </div>
+
+                                        <div className="w-px h-8 bg-slate-700 mx-2"></div>
+
+                                        <div className="flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-lg">
+                                            <input type="color" value={editorColor} onChange={(e) => setEditorColor(e.target.value)} className="w-7 h-7 rounded-md cursor-pointer border-2 border-slate-600" />
+                                            <button onClick={handleColorChange} className="text-sm font-medium hover:text-indigo-400 transition-colors">צבע</button>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-lg">
+                                            <input type="number" min="1" max="7" value={editorSize} onChange={(e) => setEditorSize(e.target.value)} className="w-10 bg-slate-700 text-center text-sm rounded-md p-1 outline-none" />
+                                            <button onClick={handleSizeChange} className="text-sm font-medium hover:text-indigo-400 transition-colors">גודל</button>
+                                            <button onClick={handleResetSize} className="w-6 h-6 flex items-center justify-center text-slate-500 hover:text-white hover:bg-red-500/20 rounded transition-colors">✕</button>
+                                        </div>
+
+                                        <div className="w-px h-8 bg-slate-700 mx-2"></div>
+
+                                        <button onClick={handleSubtitle} className="px-4 py-2 bg-gradient-to-r from-indigo-600/50 to-purple-600/50 hover:from-indigo-500 hover:to-purple-500 rounded-lg text-sm font-medium transition-all btn-lift">כותרת</button>
+                                        <button onClick={handleSubtitleIn} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">תת-כותרת</button>
+
+                                        <div className="w-px h-8 bg-slate-700 mx-2"></div>
+
+                                        <button onClick={handleAddHyperlink} className="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-cyan-600 rounded-lg text-xl transition-all btn-lift" title="הוסף קישור">🔗</button>
+                                    </div>
+
+                                    <textarea
+                                        ref={contentRef}
+                                        value={content}
+                                        onChange={(e) => setContent(e.target.value)}
+                                        className="w-full p-5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl min-h-[280px] text-base leading-relaxed resize-y outline-none transition-all input-glow placeholder:text-slate-600"
+                                        placeholder="כתוב את תוכן הכתבה כאן... ניתן להשתמש בכפתורי העריכה למעלה לעיצוב הטקסט"
+                                    />
+                                </div>
+
+                                {/* Links Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            תיאור קישור
+                                        </label>
+                                        <input type="text" value={relevantLinkDesc} onChange={(e) => setRelevantLinkDesc(e.target.value)} placeholder="לדוגמה: למעבר לכתבה" className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow placeholder:text-slate-600" />
+                                    </div>
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            כתובת הקישור
+                                        </label>
+                                        <input type="text" value={relevantLink} onChange={(e) => setRelevantLink(e.target.value)} placeholder="https://..." className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow placeholder:text-slate-600" />
+                                    </div>
+                                </div>
+
+                                {/* Source Input */}
+                                <div>
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                        מקור הכתבה
+                                    </label>
+                                    <div className="relative">
+                                        <input type="text" value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://source-example.com" className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow pl-14 placeholder:text-slate-600" />
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-50">🌐</div>
+                                    </div>
+                                </div>
+
+                                {/* Forum Select */}
+                                <div>
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
+                                        פורום רלוונטי
+                                    </label>
+                                    <div className="relative">
+                                        <select value={forumName} onChange={(e) => setForumName(e.target.value)} className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none appearance-none cursor-pointer input-glow">
+                                            <option>בחירת פורום</option>
+                                            <option>פורום 1</option>
+                                            <option>פורום 2</option>
+                                            <option>פורום 3</option>
+                                        </select>
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">▼</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Related Threads Section */}
+                            <div className="mt-8 pt-8 border-t border-slate-700/50">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+                                            <span className="text-lg">📌</span>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-bold text-white">אשכולות רלוונטיים</h3>
+                                            <p className="text-xs text-slate-400">5 קישורים לאשכולות קשורים</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-sm font-semibold transition-all btn-lift glow-indigo">
+                                        🔍 חפש אשכולות
+                                    </button>
+                                </div>
+                                <div className="space-y-3">
+                                    {threads.map((thread, idx) => (
+                                        <div key={idx} className="flex gap-3 items-center group">
+                                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:from-indigo-600 group-hover:to-purple-600 group-hover:text-white transition-all">
+                                                {idx + 1}
+                                            </div>
+                                            <input
+                                                type="text"
+                                                value={thread.title}
+                                                onChange={e => handleThreadChange(idx, 'title', e.target.value)}
+                                                placeholder="כותרת האשכול"
+                                                className="flex-1 p-3 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none text-sm input-glow placeholder:text-slate-600"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={thread.link}
+                                                onChange={e => handleThreadChange(idx, 'link', e.target.value)}
+                                                placeholder="https://..."
+                                                className="flex-1 p-3 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none text-sm input-glow placeholder:text-slate-600"
+                                                dir="ltr"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Preview and Output Section */}
-                    <div className="space-y-8 sticky top-6">
-                        {/* HTML Preview */}
-                        <div className="bg-slate-900/60 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
-                             <div className="bg-slate-800/80 p-4 border-b border-slate-700 flex justify-between items-center backdrop-blur">
-                                <h2 className="text-lg font-bold text-slate-200">תצוגה מקדימה (Live)</h2>
-                                <div className="flex gap-1.5">
-                                    <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-                                    <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                                    <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+                    {/* Preview and Output Section - Right Column */}
+                    <div className="space-y-8 xl:sticky xl:top-8">
+                        {/* Live Preview Card */}
+                        <div className="glass-card rounded-2xl overflow-hidden glow-purple">
+                            <div className="bg-gradient-to-r from-slate-800/90 to-slate-900/90 p-5 border-b border-slate-700/50 flex justify-between items-center backdrop-blur-xl">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg">
+                                        <span className="text-lg">👁️</span>
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-bold text-white">תצוגה מקדימה</h2>
+                                        <p className="text-xs text-slate-400">עדכון בזמן אמת</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="w-3.5 h-3.5 rounded-full bg-red-500 shadow-lg shadow-red-500/50"></div>
+                                    <div className="w-3.5 h-3.5 rounded-full bg-yellow-500 shadow-lg shadow-yellow-500/50"></div>
+                                    <div className="w-3.5 h-3.5 rounded-full bg-green-500 shadow-lg shadow-green-500/50"></div>
                                 </div>
                             </div>
-                            <div className="p-6 bg-[#f3f4f6]" style={{ minHeight: '400px' }}>
-                                {/* The actual preview container simulating the forum style */}
-                                <div className="text-black overflow-y-auto max-h-[600px] custom-scrollbar" style={{ direction: 'rtl' }} dangerouslySetInnerHTML={{ __html: previewContent }}></div>
+                            <div className="p-6 bg-gradient-to-br from-gray-100 to-gray-200" style={{ minHeight: '450px' }}>
+                                <div className="text-black overflow-y-auto max-h-[550px] rounded-lg" style={{ direction: 'rtl' }} dangerouslySetInnerHTML={{ __html: previewContent }}></div>
                             </div>
                         </div>
 
-                        {/* BBCode Output */}
-                         <div className="bg-slate-900/60 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
-                            <div className="bg-slate-800/80 p-4 border-b border-slate-700 backdrop-blur">
-                                <h2 className="text-lg font-bold text-slate-200">קוד סופי (BBCODE)</h2>
+                        {/* BBCode Output Card */}
+                        <div className="glass-card rounded-2xl overflow-hidden glow-emerald">
+                            <div className="bg-gradient-to-r from-slate-800/90 to-slate-900/90 p-5 border-b border-slate-700/50 backdrop-blur-xl">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
+                                        <span className="text-lg">📋</span>
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-bold text-white">קוד סופי</h2>
+                                        <p className="text-xs text-slate-400">מוכן להעתקה ופרסום</p>
+                                    </div>
+                                </div>
                             </div>
                             <div className="p-6">
-                                <div className="relative">
-                                    <textarea 
-                                        readOnly 
-                                        value={generatedBBcode} 
-                                        className="w-full p-4 bg-slate-950 border border-slate-800 rounded-xl h-40 font-mono text-xs text-slate-400 focus:text-slate-200 focus:border-indigo-500 transition-colors outline-none resize-none mb-4" 
-                                    />
-                                    <button 
-                                        onClick={() => copyToClipboard(generatedBBcode)} 
-                                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-emerald-900/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-                                    >
-                                        📋 העתק קוד לפרסום
-                                    </button>
-                                </div>
+                                <textarea
+                                    readOnly
+                                    value={generatedBBcode}
+                                    className="w-full p-4 bg-slate-950/80 border-2 border-slate-800 rounded-xl h-44 font-mono text-xs text-slate-400 focus:text-slate-200 focus:border-emerald-500 transition-all outline-none resize-none mb-5"
+                                />
+                                <button
+                                    onClick={() => copyToClipboard(generatedBBcode)}
+                                    className="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:via-teal-400 hover:to-cyan-400 text-white font-black text-lg py-4 px-6 rounded-xl shadow-xl transition-all btn-lift glow-emerald"
+                                >
+                                    📋 העתק קוד לפרסום
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -546,7 +653,14 @@ function ArticleGeneratorComponent() {
 // Wrapper for Suspense
 export default function Home() {
     return (
-        <Suspense fallback={<div className="flex h-screen w-full items-center justify-center text-slate-400">טוען נתונים...</div>}>
+        <Suspense fallback={
+            <div className="flex h-screen w-full items-center justify-center">
+                <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+                    <p className="text-slate-400 text-lg">טוען...</p>
+                </div>
+            </div>
+        }>
             <ArticleGeneratorComponent />
         </Suspense>
     );
