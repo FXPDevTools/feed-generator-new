@@ -39,7 +39,7 @@
   %IF_ADDITIONAL_LINKS_END%
   <img src="https://i.imagesup.co/images2/ceb0a248f7a02c4c3acd0da5857f18930b16afb3.png" alt="" class="centered-img" />
   <div style="font-size: 1em; font-weight: bold; margin: 1em 0;">
-    <a href="https://www.fxp.co.il/private.php?do=newpm&u=1030355" style="color: #000; text-decoration: underline;">מצאתם טעות בכתבה? ספרו לנו ונתקן בהקדם</a>
+    <a href="https://www.fxp.co.il/private.php?do=newpm&u=783422" style="color: #000; text-decoration: underline;">מצאתם טעות בכתבה? ספרו לנו ונתקן בהקדם</a>
   </div>
   <table style="width: 250px; margin: 1em auto; text-align: center;">
     <tr></tr>

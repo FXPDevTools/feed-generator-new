@@ -28,7 +28,7 @@
 [URL=%AdditionalLink5%][B]%AdditionalTitle5%[/B][/URL]
 %IF_ADDITIONAL_LINKS_END%
 [IMG]https://i.imagesup.co/images2/ceb0a248f7a02c4c3acd0da5857f18930b16afb3.png[/IMG]
-[B][SIZE=2][U][URL="https://www.fxp.co.il/private.php?do=newpm&u=1030355"][COLOR=#000000]מצאתם טעות בכתבה? ספרו לנו ונתקן בהקדם[/COLOR][/URL][/U][/SIZE][/B]
+[B][SIZE=2][U][URL="https://www.fxp.co.il/private.php?do=newpm&u=783422"][COLOR=#000000]מצאתם טעות בכתבה? ספרו לנו ונתקן בהקדם[/COLOR][/URL][/U][/SIZE][/B]
 [TABLE="width: 250, align: center"]
 [TR]
 [TD][FONT=tahoma][B][COLOR=#3366cc][SIZE=3]בברכה,
