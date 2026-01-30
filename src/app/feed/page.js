@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import depts from 'public/dept-config.json';
 import forumCategories from 'public/forum-categories.json';
 import BackButtons from "../components/BackButtons";
+import { ClassicEditor, ModernEditor } from '../components/FeedEditors';
 import { simulateTemplateForPreview, bbcodeToHtml } from '../../../lib/bbcode-preview';
 
 // Helper function to process the media link
@@ -25,17 +26,43 @@ const processMediaLink = (url) => {
 
     // YouTube URL patterns
     const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = url.match(youtubeRegex);
+    const youtubeMatch = url.match(youtubeRegex);
 
-    if (match && match[1]) {
-        const videoId = match[1];
+    if (youtubeMatch && youtubeMatch[1]) {
+        const videoId = youtubeMatch[1];
         return {
             html: `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width:100%; border-radius: 8px;"></iframe>`,
-            bbcode: `[URL]${url}[/URL]` // Standard URL tag for videos
+            bbcode: `[URL]${url}[/URL]`
         };
     }
 
-    // Assume it's an image if it's not a YouTube link
+    // X (Twitter) URL patterns
+    // Matches x.com or twitter.com /user/status/id
+    const xRegex = /(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/([a-zA-Z0-9_]+)\/status\/([0-9]+)/;
+    const xMatch = url.match(xRegex);
+
+    if (xMatch && xMatch[2]) {
+        const tweetId = xMatch[2];
+        // Use Twitter embed iframe
+        return {
+            html: `<div style="display:flex;justify-content:center;"><iframe src="https://platform.twitter.com/embed/Tweet.html?dnt=false&embedId=twitter-widget-0&frame=false&hideCard=false&hideThread=false&id=${tweetId}&lang=en&theme=light&widgetsVersion=2615f7e52b7e0%3A1702314721130&width=550px" width="550" height="600" title="Twitter Tweet" style="border:0; overflow:hidden;" frameborder="0"></iframe></div>`,
+            bbcode: `[URL]${url}[/URL]` // Standard URL for X/Twitter
+        };
+    }
+
+    // Facebook URL patterns
+    const fbRegex = /(?:https?:\/\/)?(?:www\.)?(?:facebook\.com|fb\.watch)\/.+/;
+    if (fbRegex.test(url)) {
+        // Use Facebook embed iframe
+        // We need to encode the full URL
+        const encodedUrl = encodeURIComponent(url);
+        return {
+            html: `<div style="display:flex;justify-content:center;"><iframe src="https://www.facebook.com/plugins/post.php?href=${encodedUrl}&width=500&show_text=true&height=500&appId" width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe></div>`,
+            bbcode: `[URL]${url}[/URL]` // Standard URL for Facebook
+        };
+    }
+
+    // Assume it's an image if it's not a video/embed
     return {
         html: `<img src="${url}" style="max-width:100%; border-radius: 8px;">`,
         bbcode: `[IMG]${url}[/IMG]`
@@ -67,6 +94,9 @@ function ArticleGeneratorComponent() {
     const [currentTemplate, setCurrentTemplate] = useState(null);
     const [templateError, setTemplateError] = useState('');
 
+    // Mode state: null (selection), 'classic', 'modern'
+    const [mode, setMode] = useState(null);
+
     // --- States for 5 אשכולות רלוונטיים ---
     const [threads, setThreads] = useState([
         { title: '', link: '' },
@@ -75,6 +105,13 @@ function ArticleGeneratorComponent() {
         { title: '', link: '' },
         { title: '', link: '' }
     ]);
+    const [isRelevantThreadsOpen, setIsRelevantThreadsOpen] = useState(false);  // Collapsible state
+    const [previewTrigger, setPreviewTrigger] = useState(0); // Control when preview regenerates
+
+    // Trigger preview update
+    const handlePreviewUpdate = () => {
+        setPreviewTrigger(prev => prev + 1);
+    };
 
     // עדכון ערך של אשכול מסוים
     const handleThreadChange = (idx, field, value) => {
@@ -93,8 +130,6 @@ function ArticleGeneratorComponent() {
     const [generatedHtml, setGeneratedHtml] = useState('');
     const [generatedBBcode, setBBcode] = useState(''); // Your new state for BBCode
     const [previewContent, setPreviewContent] = useState('');
-    const [editorColor, setEditorColor] = useState('#000000');
-    const [editorSize, setEditorSize] = useState(3);
 
     // --- Template Loading Logic ---
     const loadTemplate = useCallback(async () => {
@@ -150,6 +185,11 @@ function ArticleGeneratorComponent() {
             case 'B': case 'U': case 'I': case 'S': newText = `[${tag}]${selectedText}[/${tag}]`; break;
             case 'COLOR': newText = `[COLOR="${value}"]${selectedText}[/COLOR]`; break;
             case 'SIZE': newText = `[SIZE=${value}]${selectedText}[/SIZE]`; break;
+            case 'RESET_SIZE':
+                // Remove SIZE tags from selection
+                const regex = /\[SIZE=.*?\](.*?)\[\/SIZE\]/gi;
+                newText = selectedText.replace(regex, '$1');
+                break;
             case 'URL': newText = `[URL="${value}"]${selectedText}[/URL]`; break;
             default: newText = selectedText;
         }
@@ -170,9 +210,6 @@ function ArticleGeneratorComponent() {
         textarea.focus();
         textarea.setSelectionRange(start, start + strippedText.length);
     };
-    const handleColorChange = () => applyBbCode('COLOR', editorColor);
-    const handleSizeChange = () => applyBbCode('SIZE', editorSize);
-    const handleResetSize = () => removeBbCode('SIZE');
     const handleSubtitle = () => applyBbCode('SIZE', 5, `[B]${content.substring(contentRef.current.selectionStart, contentRef.current.selectionEnd)}[/B]`);
     const handleSubtitleIn = () => applyBbCode('SIZE', 4, `[B]${content.substring(contentRef.current.selectionStart, contentRef.current.selectionEnd)}[/B]`);
     const handleMediaDesc = () => applyBbCode('SIZE', 1, `[I]${content.substring(contentRef.current.selectionStart, contentRef.current.selectionEnd)}[/I]`);
@@ -354,7 +391,27 @@ function ArticleGeneratorComponent() {
         };
 
         generateOutputs();
-    }, [title, imageLink, content, relevantLinkDesc, relevantLink, source, forumName, threads, currentTemplate]);
+        generateOutputs();
+    }, [previewTrigger, currentTemplate, depts, templateId]); // Only regenerate when triggered or template changes
+
+    // Track changes for throttled updates
+    const hasChanges = useRef(false);
+
+    // Mark changes whenever inputs change
+    useEffect(() => {
+        hasChanges.current = true;
+    }, [title, imageLink, content, relevantLinkDesc, relevantLink, source, forumName, threads]);
+
+    // Throttled interval: Check for changes every 500ms
+    useEffect(() => {
+        const timer = setInterval(() => {
+            if (hasChanges.current) {
+                handlePreviewUpdate();
+                hasChanges.current = false;
+            }
+        }, 500);
+        return () => clearInterval(timer);
+    }, []);
 
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text.trim()).then(() => {
@@ -449,6 +506,7 @@ function ArticleGeneratorComponent() {
                                         type="text"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
+                                        onBlur={handlePreviewUpdate}
                                         className="w-full p-4 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl transition-all outline-none input-glow text-lg placeholder:text-slate-600"
                                         placeholder="הכנס כותרת ראשית..."
                                     />
@@ -465,7 +523,8 @@ function ArticleGeneratorComponent() {
                                             type="text"
                                             value={imageLink}
                                             onChange={(e) => setImageLink(e.target.value)}
-                                            placeholder="תמונה או סרטון YouTube"
+                                            onBlur={handlePreviewUpdate}
+                                            placeholder="קישור לתמונה או סרטון YouTube..."
                                             className="w-full p-4 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl transition-all outline-none input-glow pl-14 placeholder:text-slate-600"
                                         />
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-50">🖼️</div>
@@ -473,51 +532,67 @@ function ArticleGeneratorComponent() {
                                 </div>
 
                                 {/* Content Editor */}
-                                <div className="group">
-                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-                                        תוכן הכתבה
-                                    </label>
+                                {/* Content Editor - Dynamic based on Mode */}
+                                {mode === null ? (
+                                    <div className="space-y-4 py-8">
+                                        <h3 className="text-xl font-bold text-white text-center mb-6">בחר את סוג העורך</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <button
+                                                onClick={() => setMode('classic')}
+                                                className="group relative p-6 bg-slate-800 hover:bg-slate-700/50 rounded-2xl border-2 border-slate-700 hover:border-indigo-500 transition-all text-center"
+                                            >
+                                                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">📝</div>
+                                                <h4 className="text-lg font-bold text-white mb-2">עורך קלאסי</h4>
+                                                <p className="text-sm text-slate-400">העורך המוכר והרגיל, שליטה מלאה עם BBCode</p>
+                                            </button>
 
-                                    {/* Premium Toolbar */}
-                                    <div className="flex flex-wrap items-center gap-1.5 mb-3 p-3 bg-slate-900/80 rounded-xl border border-slate-700/50">
-                                        <div className="flex gap-1">
-                                            <button onClick={() => applyBbCode('B')} className="w-10 h-10 flex items-center justify-center font-black text-lg bg-slate-800 hover:bg-indigo-600 rounded-lg transition-all btn-lift" title="מודגש">B</button>
-                                            <button onClick={() => applyBbCode('U')} className="w-10 h-10 flex items-center justify-center underline bg-slate-800 hover:bg-indigo-600 rounded-lg transition-all btn-lift" title="קו תחתון">U</button>
-                                            <button onClick={() => applyBbCode('I')} className="w-10 h-10 flex items-center justify-center italic bg-slate-800 hover:bg-indigo-600 rounded-lg transition-all btn-lift" title="נטוי">I</button>
+                                            <button
+                                                onClick={() => setMode('modern')}
+                                                className="group relative p-6 bg-slate-800 hover:bg-slate-700/50 rounded-2xl border-2 border-slate-700 hover:border-pink-500 transition-all text-center"
+                                            >
+                                                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">✨</div>
+                                                <h4 className="text-lg font-bold text-white mb-2">עורך מודרני</h4>
+                                                <p className="text-sm text-slate-400">בנייה בפסקאות, עיצוב אוטומטי וממשק נקי</p>
+                                            </button>
                                         </div>
-
-                                        <div className="w-px h-8 bg-slate-700 mx-2"></div>
-
-                                        <div className="flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-lg">
-                                            <input type="color" value={editorColor} onChange={(e) => setEditorColor(e.target.value)} className="w-7 h-7 rounded-md cursor-pointer border-2 border-slate-600" />
-                                            <button onClick={handleColorChange} className="text-sm font-medium hover:text-indigo-400 transition-colors">צבע</button>
-                                        </div>
-
-                                        <div className="flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-lg">
-                                            <input type="number" min="1" max="7" value={editorSize} onChange={(e) => setEditorSize(e.target.value)} className="w-10 bg-slate-700 text-center text-sm rounded-md p-1 outline-none" />
-                                            <button onClick={handleSizeChange} className="text-sm font-medium hover:text-indigo-400 transition-colors">גודל</button>
-                                            <button onClick={handleResetSize} className="w-6 h-6 flex items-center justify-center text-slate-500 hover:text-white hover:bg-red-500/20 rounded transition-colors">✕</button>
-                                        </div>
-
-                                        <div className="w-px h-8 bg-slate-700 mx-2"></div>
-
-                                        <button onClick={handleSubtitle} className="px-4 py-2 bg-gradient-to-r from-indigo-600/50 to-purple-600/50 hover:from-indigo-500 hover:to-purple-500 rounded-lg text-sm font-medium transition-all btn-lift">כותרת</button>
-                                        <button onClick={handleSubtitleIn} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">תת-כותרת</button>
-
-                                        <div className="w-px h-8 bg-slate-700 mx-2"></div>
-
-                                        <button onClick={handleAddHyperlink} className="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-cyan-600 rounded-lg text-xl transition-all btn-lift" title="הוסף קישור">🔗</button>
                                     </div>
+                                ) : (
+                                    <>
+                                        <div className="flex justify-end mb-2">
+                                            <button
+                                                onClick={() => {
+                                                    if (confirm('חזרה למסך בחירה תאפס את העורך. להמשיך?')) {
+                                                        setMode(null);
+                                                        setContent('');
+                                                    }
+                                                }}
+                                                className="text-xs text-slate-500 hover:text-white underline"
+                                            >
+                                                חזרה לבחירת עורך
+                                            </button>
+                                        </div>
 
-                                    <textarea
-                                        ref={contentRef}
-                                        value={content}
-                                        onChange={(e) => setContent(e.target.value)}
-                                        className="w-full p-5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl min-h-[280px] text-base leading-relaxed resize-y outline-none transition-all input-glow placeholder:text-slate-600"
-                                        placeholder="כתוב את תוכן הכתבה כאן... ניתן להשתמש בכפתורי העריכה למעלה לעיצוב הטקסט"
-                                    />
-                                </div>
+                                        {mode === 'classic' ? (
+                                            <ClassicEditor
+                                                content={content}
+                                                setContent={setContent}
+                                                applyBbCode={applyBbCode}
+                                                handleSubtitle={handleSubtitle}
+                                                handleSubtitleIn={handleSubtitleIn}
+                                                handleAddHyperlink={handleAddHyperlink}
+                                                contentRef={contentRef}
+                                                onBlur={handlePreviewUpdate}
+                                            />
+                                        ) : (
+                                            <ModernEditor
+                                                content={content}
+                                                setContent={setContent}
+                                                deptColor={depts.feed.deptColor}
+                                                onBlur={handlePreviewUpdate}
+                                            />
+                                        )}
+                                    </>
+                                )}
 
                                 {/* Links Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -526,14 +601,14 @@ function ArticleGeneratorComponent() {
                                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                             תיאור קישור
                                         </label>
-                                        <input type="text" value={relevantLinkDesc} onChange={(e) => setRelevantLinkDesc(e.target.value)} placeholder="לדוגמה: למעבר לכתבה" className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow placeholder:text-slate-600" />
+                                        <input type="text" value={relevantLinkDesc} onChange={(e) => setRelevantLinkDesc(e.target.value)} onBlur={handlePreviewUpdate} placeholder="לדוגמה: למעבר לכתבה" className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow placeholder:text-slate-600" />
                                     </div>
                                     <div>
                                         <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
                                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                             כתובת הקישור
                                         </label>
-                                        <input type="text" value={relevantLink} onChange={(e) => setRelevantLink(e.target.value)} placeholder="https://..." className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow placeholder:text-slate-600" />
+                                        <input type="text" value={relevantLink} onChange={(e) => setRelevantLink(e.target.value)} onBlur={handlePreviewUpdate} placeholder="https://..." className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow placeholder:text-slate-600" />
                                     </div>
                                 </div>
 
@@ -544,7 +619,7 @@ function ArticleGeneratorComponent() {
                                         מקור הכתבה
                                     </label>
                                     <div className="relative">
-                                        <input type="text" value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://source-example.com" className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow pl-14 placeholder:text-slate-600" />
+                                        <input type="text" value={source} onChange={(e) => setSource(e.target.value)} onBlur={handlePreviewUpdate} placeholder="https://source-example.com" className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none input-glow pl-14 placeholder:text-slate-600" />
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-50">🌐</div>
                                     </div>
                                 </div>
@@ -556,7 +631,7 @@ function ArticleGeneratorComponent() {
                                         פורום רלוונטי
                                     </label>
                                     <div className="relative">
-                                        <select value={forumName} onChange={(e) => setForumName(e.target.value)} className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none appearance-none cursor-pointer input-glow">
+                                        <select value={forumName} onChange={(e) => { setForumName(e.target.value); handlePreviewUpdate(); }} className="w-full p-3.5 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none appearance-none cursor-pointer input-glow">
                                             <option value="">בחירת פורום</option>
                                             {forumCategories.map((category) => (
                                                 <optgroup key={category.category} label={`── ${category.category} ──`}>
@@ -575,47 +650,61 @@ function ArticleGeneratorComponent() {
 
                             {/* Related Threads Section */}
                             <div className="mt-8 pt-8 border-t border-slate-700/50">
-                                <div className="flex items-center justify-between mb-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRelevantThreadsOpen(!isRelevantThreadsOpen)}
+                                    className="w-full flex items-center justify-between mb-2 group p-2 hover:bg-slate-800/30 rounded-xl transition-all"
+                                >
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+                                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                                             <span className="text-lg">📌</span>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-bold text-white">אשכולות רלוונטיים</h3>
+                                        <div className="text-right">
+                                            <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">אשכולות רלוונטיים</h3>
                                             <p className="text-xs text-slate-400">5 קישורים לאשכולות קשורים</p>
                                         </div>
                                     </div>
-                                    <button type="button" onClick={handleSearchThreads} className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-sm font-semibold transition-all btn-lift glow-indigo">
-                                        🔍 חפש אשכולות
-                                    </button>
-                                </div>
-                                <div className="space-y-3">
-                                    {threads.map((thread, idx) => (
-                                        <div key={idx} className="flex gap-3 items-center group">
-                                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:from-indigo-600 group-hover:to-purple-600 group-hover:text-white transition-all">
-                                                {idx + 1}
-                                            </div>
-                                            <input
-                                                type="text"
-                                                value={thread.title}
-                                                onChange={e => handleThreadChange(idx, 'title', e.target.value)}
-                                                placeholder="כותרת האשכול"
-                                                className="flex-1 p-3 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none text-sm input-glow placeholder:text-slate-600"
-                                            />
-                                            <input
-                                                type="text"
-                                                value={thread.link}
-                                                onChange={e => handleThreadChange(idx, 'link', e.target.value)}
-                                                placeholder="https://..."
-                                                className="flex-1 p-3 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none text-sm input-glow placeholder:text-slate-600"
-                                                dir="ltr"
-                                            />
+                                    <div className={`text-slate-400 transition-transform duration-300 ${isRelevantThreadsOpen ? 'rotate-180' : ''}`}>
+                                        ▼
+                                    </div>
+                                </button>
+
+                                {isRelevantThreadsOpen && (
+                                    <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="flex justify-end mb-4">
+                                            <button type="button" onClick={handleSearchThreads} className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-sm font-semibold transition-all btn-lift glow-indigo">
+                                                🔍 חפש אשכולות
+                                            </button>
                                         </div>
-                                    ))}
-                                </div>
+                                        {threads.map((thread, idx) => (
+                                            <div key={idx} className="flex gap-3 items-center group">
+                                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:from-indigo-600 group-hover:to-purple-600 group-hover:text-white transition-all">
+                                                    {idx + 1}
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={thread.title}
+                                                    onChange={e => handleThreadChange(idx, 'title', e.target.value)}
+                                                    onBlur={handlePreviewUpdate}
+                                                    placeholder="כותרת האשכול"
+                                                    className="flex-1 p-3 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none text-sm input-glow placeholder:text-slate-600"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={thread.link}
+                                                    onChange={e => handleThreadChange(idx, 'link', e.target.value)}
+                                                    onBlur={handlePreviewUpdate}
+                                                    placeholder="https://..."
+                                                    className="flex-1 p-3 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl outline-none text-sm input-glow placeholder:text-slate-600"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
+
 
                     {/* Preview and Output Section - Right Column */}
                     <div className="space-y-8 xl:sticky xl:top-8">
