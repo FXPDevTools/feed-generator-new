@@ -20,52 +20,140 @@ function processConditionalBlocks(template, values) {
     });
 }
 const processMediaLink = (url) => {
-    if (!url) {
-        return { html: '', bbcode: '' };
-    }
+    if (!url) return { html: '', bbcode: '', valid: true, type: null };
 
-    // YouTube URL patterns
+    // YouTube
     const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const youtubeMatch = url.match(youtubeRegex);
-
-    if (youtubeMatch && youtubeMatch[1]) {
-        const videoId = youtubeMatch[1];
+    const ytMatch = url.match(youtubeRegex);
+    if (ytMatch && ytMatch[1]) {
         return {
-            html: `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width:100%; border-radius: 8px;"></iframe>`,
-            bbcode: `[URL]${url}[/URL]`
+            html: `<iframe width="560" height="315" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width:100%; border-radius: 8px;"></iframe>`,
+            bbcode: `[youtube]${ytMatch[1]}[/youtube]`,
+            valid: true,
+            type: 'YouTube'
         };
     }
 
-    // X (Twitter) URL patterns
-    // Matches x.com or twitter.com /user/status/id
+    // Vimeo
+    const vimeoRegex = /(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/)([0-9]+)/;
+    const vimeoMatch = url.match(vimeoRegex);
+    if (vimeoMatch && vimeoMatch[1]) {
+        return {
+            html: `<iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="max-width:100%; border-radius: 8px;"></iframe>`,
+            bbcode: `[vimeo]${vimeoMatch[1]}[/vimeo]`,
+            valid: true,
+            type: 'Vimeo'
+        };
+    }
+
+    // DailyMotion
+    const dmRegex = /(?:https?:\/\/)?(?:www\.)?(?:dailymotion\.com\/video\/|dai\.ly\/)([a-zA-Z0-9]+)/;
+    const dmMatch = url.match(dmRegex);
+    if (dmMatch && dmMatch[1]) {
+        return {
+            html: `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe style="width:100%;height:100%;position:absolute;left:0px;top:0px;overflow:hidden" frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/${dmMatch[1]}" width="100%" height="100%" allowfullscreen ></iframe></div>`,
+            bbcode: `[dailymotion]${dmMatch[1]}[/dailymotion]`,
+            valid: true,
+            type: 'DailyMotion'
+        };
+    }
+
+    // TikTok
+    if (url.includes('tiktok.com')) {
+        return {
+            html: `<blockquote class="tiktok-embed" cite="${url}" data-video-id="${url.split('/').pop()}" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@user" href="${url}">@user</a> <p>TikTok Video</p> <a target="_blank" title="♬ original sound" href="${url}">♬ original sound</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>`,
+            bbcode: `[tiktok]${url}[/tiktok]`, // Assuming simple URL wrap
+            valid: true,
+            type: 'TikTok'
+        };
+    }
+
+    // X (Twitter)
     const xRegex = /(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/([a-zA-Z0-9_]+)\/status\/([0-9]+)/;
     const xMatch = url.match(xRegex);
-
     if (xMatch && xMatch[2]) {
-        const tweetId = xMatch[2];
-        // Use Twitter embed iframe
         return {
-            html: `<div style="display:flex;justify-content:center;"><iframe src="https://platform.twitter.com/embed/Tweet.html?dnt=false&embedId=twitter-widget-0&frame=false&hideCard=false&hideThread=false&id=${tweetId}&lang=en&theme=light&widgetsVersion=2615f7e52b7e0%3A1702314721130&width=550px" width="550" height="600" title="Twitter Tweet" style="border:0; overflow:hidden;" frameborder="0"></iframe></div>`,
-            bbcode: `[URL]${url}[/URL]` // Standard URL for X/Twitter
+            html: `<div style="display:flex;justify-content:center;"><iframe src="https://platform.twitter.com/embed/Tweet.html?dnt=false&embedId=twitter-widget-0&frame=false&hideCard=false&hideThread=false&id=${xMatch[2]}&lang=en&theme=light&widgetsVersion=2615f7e52b7e0%3A1702314721130&width=550px" width="550" height="600" title="Twitter Tweet" style="border:0; overflow:hidden;" frameborder="0"></iframe></div>`,
+            bbcode: `[twitter]${url}[/twitter]`,
+            valid: true,
+            type: 'Twitter/X'
         };
     }
 
-    // Facebook URL patterns
+    // Instagram
+    if (url.includes('instagram.com/p/') || url.includes('instagram.com/reel/')) {
+        return {
+            html: `<iframe src="${url}embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe>`,
+            bbcode: `[instagram]${url}[/instagram]`,
+            valid: true,
+            type: 'Instagram'
+        };
+    }
+
+    // Facebook
     const fbRegex = /(?:https?:\/\/)?(?:www\.)?(?:facebook\.com|fb\.watch)\/.+/;
     if (fbRegex.test(url)) {
-        // Use Facebook embed iframe
-        // We need to encode the full URL
         const encodedUrl = encodeURIComponent(url);
         return {
             html: `<div style="display:flex;justify-content:center;"><iframe src="https://www.facebook.com/plugins/post.php?href=${encodedUrl}&width=500&show_text=true&height=500&appId" width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe></div>`,
-            bbcode: `[URL]${url}[/URL]` // Standard URL for Facebook
+            bbcode: `[facebook]${url}[/facebook]`,
+            valid: true,
+            type: 'Facebook'
         };
     }
 
-    // Assume it's an image if it's not a video/embed
+    // Spotify
+    if (url.includes('spotify.com')) {
+        return {
+            html: `<iframe style="border-radius:12px" src="${url.replace('spotify.com', 'spotify.com/embed')}" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`,
+            bbcode: `[spotify]${url}[/spotify]`,
+            valid: true,
+            type: 'Spotify'
+        };
+    }
+
+    // SoundCloud
+    if (url.includes('soundcloud.com')) {
+        return {
+            html: `<iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>`,
+            bbcode: `[soundcloud]${url}[/soundcloud]`,
+            valid: true,
+            type: 'SoundCloud'
+        };
+    }
+
+    // Twitch
+    if (url.includes('twitch.tv')) {
+        return {
+            html: `<iframe src="https://player.twitch.tv/?channel=${url.split('/').pop()}&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620"></iframe>`,
+            bbcode: `[twitch]${url}[/twitch]`,
+            valid: true,
+            type: 'Twitch'
+        };
+    }
+
+
+    // Image (Generic)
+    const imgRegex = /\.(jpeg|jpg|gif|png|webp|bmp|svg)$/i;
+    // Also accept generic image URLs if they don't match other providers but look like URLs
+    // But for "valid embedding", let's require extension or known image host?
+    // User asked "if it is NOT a site that BBCODE supports... warning".
+    // Let's assume generic URL ending in image extension is supported [img].
+    if (imgRegex.test(url)) {
+        return {
+            html: `<img src="${url}" style="max-width:100%; border-radius: 8px;">`,
+            bbcode: `[img]${url}[/img]`,
+            valid: true,
+            type: 'Image'
+        };
+    }
+
+    // Fallback: Unknown/Unsupported for embedding
     return {
-        html: `<img src="${url}" style="max-width:100%; border-radius: 8px;">`,
-        bbcode: `[IMG]${url}[/IMG]`
+        html: `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`,
+        bbcode: `[url]${url}[/url]`,
+        valid: false,
+        type: 'Unknown'
     };
 };
 
@@ -96,6 +184,11 @@ function ArticleGeneratorComponent() {
 
     // Mode state: null (selection), 'classic', 'modern'
     const [mode, setMode] = useState(null);
+
+    // Media Link Validation State
+    const [mediaLinkStatus, setMediaLinkStatus] = useState({ valid: true, type: null });
+
+
 
     // --- States for 5 אשכולות רלוונטיים ---
     const [threads, setThreads] = useState([
@@ -130,6 +223,17 @@ function ArticleGeneratorComponent() {
     const [generatedHtml, setGeneratedHtml] = useState('');
     const [generatedBBcode, setBBcode] = useState(''); // Your new state for BBCode
     const [previewContent, setPreviewContent] = useState('');
+
+    // Validate Media Link on change (Moved here to access imageLink)
+    useEffect(() => {
+        if (!imageLink) {
+            setMediaLinkStatus({ valid: true, type: null });
+            return;
+        }
+        const { valid, type } = processMediaLink(imageLink);
+        setMediaLinkStatus({ valid, type });
+    }, [imageLink]);
+
 
     // --- Template Loading Logic ---
     const loadTemplate = useCallback(async () => {
@@ -514,21 +618,47 @@ function ArticleGeneratorComponent() {
 
                                 {/* Media Link Input */}
                                 <div className="group">
-                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-2">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                                        קישור למדיה
-                                    </label>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                                            קישור למדיה
+                                        </label>
+                                        <div className="group/tooltip relative">
+                                            <span className="cursor-help text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full hover:bg-slate-600 transition-colors border border-slate-600">אתרים נתמכים ℹ️</span>
+                                            <div className="absolute bottom-full left-0 mb-2 hidden group-hover/tooltip:block w-64 bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-xl z-50 text-xs text-slate-300">
+                                                <p className="font-bold mb-1 text-white border-b border-slate-700 pb-1">ניתן להטמיע:</p>
+                                                <ul className="list-disc list-inside space-y-0.5 text-slate-400">
+                                                    <li>YouTube, Vimeo, DailyMotion</li>
+                                                    <li>Facebook, Twitter/X, Instagram</li>
+                                                    <li>TikTok, Twitch</li>
+                                                    <li>SoundCloud, Spotify</li>
+                                                    <li>תמונות (JPG, PNG, GIF, WEBP)</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             value={imageLink}
                                             onChange={(e) => setImageLink(e.target.value)}
                                             onBlur={handlePreviewUpdate}
-                                            placeholder="קישור לתמונה או סרטון YouTube..."
-                                            className="w-full p-4 bg-slate-900/50 border-2 border-slate-700/50 focus:border-indigo-500 rounded-xl transition-all outline-none input-glow pl-14 placeholder:text-slate-600"
+                                            placeholder="הדבק קישור (YouTube, TikTok, תמונה, רשתות חברתיות...)"
+                                            className={`w-full p-4 bg-slate-900/50 border-2 rounded-xl transition-all outline-none input-glow pl-14 placeholder:text-slate-600 ${!mediaLinkStatus.valid && imageLink
+                                                ? 'border-yellow-500/50 focus:border-yellow-500'
+                                                : 'border-slate-700/50 focus:border-indigo-500'
+                                                }`}
                                         />
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-50">🖼️</div>
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-50">
+                                            {!mediaLinkStatus.valid && imageLink ? '⚠️' : '🖼️'}
+                                        </div>
                                     </div>
+                                    {!mediaLinkStatus.valid && imageLink && (
+                                        <p className="text-yellow-500 text-xs mt-2 flex items-center gap-1 animate-pulse">
+                                            <span>⚠️</span>
+                                            קישור זה אינו נתמך להטמעה ישירה (יוצג כקישור רגיל)
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Content Editor */}
