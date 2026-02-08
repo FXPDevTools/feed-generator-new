@@ -103,7 +103,9 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
                             newColors[`topic_${t.id}`] = t.topic_color;
                         });
                         setCategoryColors(newColors);
-                        setCategory(`topic_${data[0].id}`);
+                        setCategoryColors(newColors);
+                        // Default category is empty string, which uses deptColor. 
+                        // We do NOT set it to the first topic anymore as per user request.
                     }
                 }
             } catch (error) {
@@ -137,7 +139,7 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
         const builtContent = paragraphs.map(p => {
             let block = '';
             if (p.subtitle.trim()) {
-                block += `[COLOR="${color}"][B][U]${p.subtitle.trim()}[/U][/B][/COLOR]\n`;
+                block += `[COLOR=${color}][B][U]${p.subtitle.trim()}[/U][/B][/COLOR]\n`;
             }
             block += p.text;
             return block;
@@ -231,7 +233,7 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
                         onChange={(e) => setCategory(e.target.value)}
                         className="flex-1 md:flex-none bg-slate-900 border border-slate-700 rounded-lg text-sm text-white p-2 outline-none focus:border-indigo-500 transition-all min-w-[200px]"
                     >
-                        {!loadingTopics && topics.length === 0 && <option value="">ברירת מחדל (צבע ראשי)</option>}
+                        <option value="">ברירת מחדל (צבע ראשי)</option>
                         {topics.map(topic => (
                             <option key={topic.id} value={`topic_${topic.id}`}>
                                 {topic.topic_name}
