@@ -78,21 +78,62 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
     const [paragraphs, setParagraphs] = useState([
         { id: 'initial', subtitle: '', text: '' }
     ]);
-    const [category, setCategory] = useState('general');
+    const [category, setCategory] = useState('');
+    const [topics, setTopics] = useState([]);
+    const [loadingTopics, setLoadingTopics] = useState(true);
 
     // Refs for textareas to handle BBCode insertion
     const textareaRefs = useRef({});
 
-    const categoryColors = {
-        gaming: '#daa520',
-        technology: '#008b8b',
-        cinema: '#4b0082',
-        general: `#${deptColor.replace('#', '')}`
-    };
+    // Default categories fallback
+    const defaultCategories = {};
+
+    const [categoryColors, setCategoryColors] = useState(defaultCategories);
+
+    useEffect(() => {
+        const fetchTopics = async () => {
+            try {
+                const res = await fetch('/api/feed/topics');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        setTopics(data);
+                        const newColors = { ...defaultCategories };
+                        data.forEach(t => {
+                            newColors[`topic_${t.id}`] = t.topic_color;
+                        });
+                        setCategoryColors(newColors);
+                        setCategory(`topic_${data[0].id}`);
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading topics:", error);
+            } finally {
+                setLoadingTopics(false);
+            }
+        };
+        fetchTopics();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Run once on mount
 
     // Update parent content whenever paragraphs or category change
     useEffect(() => {
-        const color = categoryColors[category];
+        // Default to department color (Main Title Color)
+        let color = `#${deptColor.replace('#', '')}`;
+
+        // Check if it's a default category
+        if (categoryColors[category]) {
+            color = categoryColors[category];
+        } else {
+            // Find in topics array if it's a custom topic ID
+            // value format 'topic_ID'
+            const topicId = category.startsWith('topic_') ? category.split('_')[1] : null;
+            if (topicId) {
+                const topic = topics.find(t => t.id == topicId);
+                if (topic) color = topic.topic_color;
+            }
+        }
+
         const builtContent = paragraphs.map(p => {
             let block = '';
             if (p.subtitle.trim()) {
@@ -106,7 +147,7 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
             setContent(builtContent);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [paragraphs, category, content, setContent, deptColor]);
+    }, [paragraphs, category, content, setContent, deptColor, categoryColors, topics]);
 
     const addParagraph = () => {
         setParagraphs([...paragraphs, { id: Date.now(), subtitle: '', text: '' }]);
@@ -177,22 +218,27 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-2">
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
                     תוכן הכתבה (מודרני)
                 </div>
 
-                <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="bg-slate-900 border border-slate-700 rounded-lg text-sm text-white p-2 outline-none focus:border-indigo-500 transition-all"
-                >
-                    <option value="general">כללי</option>
-                    <option value="gaming">גיימינג (זהב)</option>
-                    <option value="technology">טכנולוגיה (טורקיז)</option>
-                    <option value="cinema">קולנוע (אינדיגו)</option>
-                </select>
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                    <label className="text-sm font-medium text-slate-300 whitespace-nowrap">נושא הכתבה:</label>
+                    <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="flex-1 md:flex-none bg-slate-900 border border-slate-700 rounded-lg text-sm text-white p-2 outline-none focus:border-indigo-500 transition-all min-w-[200px]"
+                    >
+                        {!loadingTopics && topics.length === 0 && <option value="">ברירת מחדל (צבע ראשי)</option>}
+                        {topics.map(topic => (
+                            <option key={topic.id} value={`topic_${topic.id}`}>
+                                {topic.topic_name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <div className="space-y-4">
@@ -216,7 +262,7 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
                                 onBlur={onBlur}
                                 placeholder="תת כותרת (אופציונלי)"
                                 className="w-full bg-transparent border-b border-indigo-500/30 focus:border-indigo-500 px-1 py-1 text-sm font-semibold placeholder:text-slate-600 outline-none transition-colors"
-                                style={{ color: categoryColors[category] }}
+                                style={{ color: categoryColors[category] || '#ffffff' }}
                             />
                         </div>
 
