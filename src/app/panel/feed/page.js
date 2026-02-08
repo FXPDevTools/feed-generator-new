@@ -9,6 +9,7 @@ export default function FeedPanel() {
   const role = info?.role || '';
   const actions = [
     <PanelButton key="templates" as="a" href="/panel/feed/templates" className="text-xl text-center rounded-lg shadow-md font-bold bg-green-700 hover:bg-green-800 text-white">ניהול תבניות BBCode</PanelButton>,
+    <PanelButton key="topics" as="a" href="/panel/feed/topics" className="text-xl text-center rounded-lg shadow-md font-bold bg-blue-700 hover:bg-blue-800 text-white">ניהול נושאי כתבות</PanelButton>,
 
   ];
   return (
