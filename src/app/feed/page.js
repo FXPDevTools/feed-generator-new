@@ -69,12 +69,15 @@ const processMediaLink = (url) => {
     }
 
     // X (Twitter)
-    const xRegex = /(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/([a-zA-Z0-9_]+)\/status\/([0-9]+)/;
+    const xRegex = /(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/(?:#!\/)?(\w+)\/status\/(\d+)/;
     const xMatch = url.match(xRegex);
     if (xMatch && xMatch[2]) {
+        // Construct standard twitter URL from match to ensure valid format if needed, 
+        // or just use the input url replacing x.com with twitter.com
+        const twitterUrl = url.replace('x.com', 'twitter.com');
         return {
-            html: `<div style="display:flex;justify-content:center;"><iframe src="https://platform.twitter.com/embed/Tweet.html?dnt=false&embedId=twitter-widget-0&frame=false&hideCard=false&hideThread=false&id=${xMatch[2]}&lang=en&theme=light&widgetsVersion=2615f7e52b7e0%3A1702314721130&width=550px" width="550" height="600" title="Twitter Tweet" style="border:0; overflow:hidden;" frameborder="0"></iframe></div>`,
-            bbcode: `[twitter]${url}[/twitter]`,
+            html: `<div style="display:flex;justify-content:center;"><blockquote class="twitter-tweet"><a href="${twitterUrl}">${twitterUrl}</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></div>`,
+            bbcode: twitterUrl, // Return raw URL as requested
             valid: true,
             type: 'Twitter/X'
         };
@@ -485,6 +488,8 @@ function ArticleGeneratorComponent() {
                 htmlTemplate = htmlTemplate.replace(/%IF_FORUM_OR_LINKS_START%([\s\S]*?)%IF_FORUM_OR_LINKS_END%/g, forumOrLinksFilled ? '$1' : '');
                 htmlTemplate = htmlTemplate.replace(/%IF_FORUM_START%([\s\S]*?)%IF_FORUM_END%/g, forumFilled ? '$1' : '');
                 htmlTemplate = htmlTemplate.replace(/%IF_ADDITIONAL_LINKS_START%([\s\S]*?)%IF_ADDITIONAL_LINKS_END%/g, additionalLinksFilled ? '$1' : '');
+                // Add Source conditional block handling for HTML preview
+                htmlTemplate = htmlTemplate.replace(/%IF_SOURCE_START%([\s\S]*?)%IF_SOURCE_END%/g, source ? '$1' : '');
 
                 setGeneratedHtml(htmlTemplate);
                 setPreviewContent(htmlTemplate);
