@@ -15,9 +15,11 @@
     <strong>%RelevantLinkDesc%</strong><br />
     <a href="%RelevantLink%" style="color: #a9a9a9; text-decoration: underline;">%RelevantLink%</a>
   </div>
+  %IF_SOURCE_START%
   <div style="font-size: 0.9em; color: #a9a9a9; margin-bottom: 1em;">
     <a href="%Source%" style="color: #a9a9a9;">מקור</a>
   </div>
+  %IF_SOURCE_END%
   %IF_FORUM_OR_LINKS_START%
   <img src="https://i.imagesup.co/images2/ceb0a248f7a02c4c3acd0da5857f18930b16afb3.png" alt="" class="centered-img" />
   %IF_FORUM_OR_LINKS_END%
