@@ -158,7 +158,8 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
     const updateParagraph = (id, field, value) => {
         setParagraphs(prev => prev.map(p => {
             if (p.id === id) {
-                if (field === 'text' && value.length > 400) return p;
+                // Modified: removed the blocking length check
+                // if (field === 'text' && value.length > 400) return p; 
                 return { ...p, [field]: value };
             }
             return p;
@@ -198,19 +199,15 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
 
         const newText = `${currentText.substring(0, start)}${newBlock}${currentText.substring(end)}`;
 
-        // Enforce limit logic if needed, but for formatting we generally allow it temporarily or handle it in updateParagraph
-        // Check length:
-        if (newText.length <= 400) {
-            updateParagraph(id, 'text', newText);
+        // Enforce limit logic - REMOVED blocking
+        // We allow formatting even if it exceeds limit, just show warning
+        updateParagraph(id, 'text', newText);
 
-            // Restore focus and selection
-            setTimeout(() => {
-                textarea.focus();
-                textarea.setSelectionRange(start, start + newBlock.length);
-            }, 0);
-        } else {
-            alert('הוספת העיצוב חורגת ממגבלת התווים!');
-        }
+        // Restore focus and selection
+        setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start, start + newBlock.length);
+        }, 0);
     };
 
     const handleAddHyperlink = (id) => {
@@ -286,10 +283,19 @@ export function ModernEditor({ content, setContent, deptColor = '3366cc', onBlur
                                 placeholder="תוכן הפסקה..."
                                 className="w-full bg-slate-950/30 rounded-lg p-3 text-sm text-slate-200 min-h-[100px] border border-transparent focus:border-slate-600 outline-none resize-y"
                             />
-                            <div className={`absolute bottom-2 left-2 text-xs font-mono font-medium ${p.text.length >= 400 ? 'text-red-500' : 'text-slate-500'}`}>
+                            <div className={`absolute bottom-2 left-2 text-xs font-mono font-medium ${p.text.length > 400 ? 'text-red-500' : 'text-slate-500'}`}>
                                 {p.text.length}/400
                             </div>
                         </div>
+                        {/* Warning Message if exceeds limit */}
+                        {p.text.length > 400 && (
+                            <div className="mt-2 text-xs text-red-400 bg-red-500/10 border border-red-500/20 p-2 rounded-lg flex items-start gap-2">
+                                <span>⚠️</span>
+                                <span>
+                                    מומלץ לחלק את הטקסט לפסקאות קצרות יותר (עד 400 תווים) כדי להפוך את הכתבה לקריאה וברורה יותר עבור הגולשים.
+                                </span>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
